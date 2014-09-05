@@ -1,7 +1,5 @@
 require "virtus"
 require "emque_messages/version"
-
-module Emque
-  module Messages
-  end
-end
+require "emque_messages/base_message.rb"
+require "emque_messages/generic_message.rb"
+require "emque_message/producer.rb"

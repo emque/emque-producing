@@ -1,15 +1,16 @@
 GIT
   remote: https://github.com/teamsnap/poseidon.git
-  revision: 65f08a6f065419e8e91bc0270fda2adb046164b2
+  revision: e6e654cb754053c3847f6c353dbaa77018fd1d2d
+  branch: new-version
   specs:
-    poseidon (0.0.4)
+    poseidon (0.0.5.beta1)
 
 PATH
   remote: .
   specs:
     emquemessages (0.0.1)
       activesupport (~> 3.2, >= 3.2.18)
-      poseidon
+      poseidon (> 0.0.4)
       virtus
 
 GEM
