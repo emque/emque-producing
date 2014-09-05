@@ -1,7 +1,12 @@
 # EmqueMessages
 
-EmqueMessages is a gem to help produce Kafka messages with Poseidon that will
-be consumed by emque services.
+EmqueMessages is a gem to help produce [Kafka](http://kafka.apache.org/)
+messages with [Poseidon](https://github.com/bpot/poseidon) that will be
+consumed by [emque](https://github.com/teamsnap/emque) services.
+
+By splitting this from emque, applications that just want to produce messages
+can be relieved of the dependencies of running emque based services and have
+an easier time running on older versions of Ruby.
 
 ## Installation
 
