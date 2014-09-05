@@ -1,3 +1,6 @@
+[ ![Codeship Status for
+teamsnap/emquemessages](https://www.codeship.io/projects/2ca7fd90-1785-0132-5f9d-7ab39a5c8237/status)](https://www.codeship.io/projects/34115)
+
 # EmqueMessages
 
 EmqueMessages is a gem to help produce [Kafka](http://kafka.apache.org/)
