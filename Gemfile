@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in emque.gemspec
 gemspec
+gem "poseidon", :git => "https://github.com/teamsnap/poseidon.git"
