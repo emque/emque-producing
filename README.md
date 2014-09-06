@@ -30,7 +30,8 @@ Or install it yourself as:
 # Requirements
 
 * Ruby 1.9.3 or higher
-* Kafka 0.8 or higher
+* Kafka 0.8.1
+* Poseidon 0.0.4
 
 ## Tests
 
