@@ -82,7 +82,7 @@ module Emque
         data.to_json
       end
 
-      def publish(publisher=Producer::Config.publisher)
+      def publish(publisher=Emque::Producer.publisher)
         if valid?
           sent = publisher.publish(topic, to_json, partition_key)
           raise MessagesNotSentError.new unless sent
@@ -116,7 +116,7 @@ module Emque
       end
 
       def app_name
-        Producer::Config.app_name || raise("Messages must have an app name configured.")
+        Emque::Producer.configuration.app_name || raise("Messages must have an app name configured.")
       end
 
       def public_attributes
