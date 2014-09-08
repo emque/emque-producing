@@ -1,5 +1,5 @@
 module Emque
-  module Producer
+  module Producing
     class << self
       attr_accessor :poseidon_producer
       attr_accessor :publisher
@@ -12,7 +12,7 @@ module Emque
       end
 
       def configuration
-        @configuration ||= Emque::Producer::Configuration.new
+        @configuration ||= Emque::Producing::Configuration.new
       end
 
       def host_name
@@ -20,7 +20,7 @@ module Emque
       end
 
       def publisher
-        @publisher ||= Emque::Producer::Publisher.new
+        @publisher ||= Emque::Producing::Publisher.new
       end
     end
   end

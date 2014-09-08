@@ -1,6 +1,6 @@
 module Emque
-  module Messages
-    module Base
+  module Producing
+    module Message
       InvalidMessageError = Class.new(StandardError)
       MessagesNotSentError = Class.new(StandardError)
 
@@ -19,10 +19,6 @@ module Emque
 
         def read_message_type
           @message_type
-        end
-
-        def from_json(json)
-          new(ActiveSupport::JSON.decode(json))
         end
 
         def private_attribute(name, coercion=nil, opts={})
@@ -79,10 +75,10 @@ module Emque
 
       def to_json
         data = self.add_metadata
-        data.to_json
+        Oj.dump(data)
       end
 
-      def publish(publisher=Emque::Producer.publisher)
+      def publish(publisher=Emque::Producing.publisher)
         if valid?
           sent = publisher.publish(topic, to_json, partition_key)
           raise MessagesNotSentError.new unless sent
@@ -116,7 +112,7 @@ module Emque
       end
 
       def app_name
-        Emque::Producer.configuration.app_name || raise("Messages must have an app name configured.")
+        Emque::Producing.configuration.app_name || raise("Messages must have an app name configured.")
       end
 
       def public_attributes

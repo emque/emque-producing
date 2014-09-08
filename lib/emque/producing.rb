@@ -1,0 +1,8 @@
+require "virtus"
+require "poseidon"
+require "oj"
+require "emque/producing/version"
+require "emque/producing/producing"
+require "emque/producing/publisher"
+require "emque/producing/configuration"
+require "emque/producing/message/message"
