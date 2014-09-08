@@ -3,8 +3,8 @@ teamsnap/emquemessages](https://www.codeship.io/projects/2ca7fd90-1785-0132-5f9d
 
 # EmqueMessages
 
-EmqueMessages is a gem to help produce [Kafka](http://kafka.apache.org/)
-messages with [Poseidon](https://github.com/bpot/poseidon) that will be
+EmqueMessages is a gem to help define and produce [Kafka](http://kafka.apache.org/)
+messages for [Poseidon](https://github.com/bpot/poseidon) that will be
 consumed by [emque](https://github.com/teamsnap/emque) services.
 
 By splitting this from emque, applications that just want to produce messages
@@ -27,7 +27,31 @@ Or install it yourself as:
 
 ## Usage
 
-# Requirements
+    # configure
+    require 'emque_messages'
+    Emque::Producer.configure do |c|
+      c.app_name = "app"
+      c.seed_brokers = ["localhost:9092"]
+      c.error_handlers << Proc.new {|ex,context|
+       # notify/log
+      }
+    end
+
+    # create a message class
+    class MyMessage
+      include Emque::Messages::Base
+      topic "topic1"
+      message_type "mymessage.new"
+
+      attribute :first_property, Integer, :required => true
+      attribute :another_property, String, :required => true
+    end
+
+    # produce message
+    message = MyMessage.new({:first_property => 1, :another_property => "another"})
+    message.publish
+
+## Requirements
 
 * Ruby 1.9.3 or higher
 * Kafka 0.8.1
