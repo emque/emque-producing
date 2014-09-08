@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'emque_messages/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "emquemessages"
+  spec.name          = "emque-messages"
   spec.version       = Emque::Messages::VERSION
   spec.authors       = ["Emily Dobervich", "Ryan Williams"]
   spec.email         = ["emily@teamsnap.com", "ryan.williams@teamsnap.com"]
