@@ -15,7 +15,7 @@ an easier time running on older versions of Ruby.
 
 Add this line to your application's Gemfile:
 
-    gem "emquemessages"
+    gem "emque-producing"
 
 And then execute:
 
@@ -23,13 +23,13 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install emquemessages
+    $ gem install emque-producing
 
 ## Usage
 
     # configure
-    require 'emque_messages'
-    Emque::Producer.configure do |c|
+    require 'emque-producing'
+    Emque::Producing.configure do |c|
       c.app_name = "app"
       c.seed_brokers = ["localhost:9092"]
       c.error_handlers << Proc.new {|ex,context|
@@ -39,7 +39,7 @@ Or install it yourself as:
 
     # create a message class
     class MyMessage
-      include Emque::Messages::Base
+      include Emque::Producing::Message
       topic "topic1"
       message_type "mymessage.new"
 
