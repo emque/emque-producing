@@ -1,7 +1,0 @@
-require "virtus"
-require "poseidon"
-require "emque_messages/version"
-require "emque_messages/base_message"
-require "emque_messages/producer"
-require "emque_messages/producer/configuration"
-require "emque_messages/producer/publisher"

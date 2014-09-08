@@ -1,5 +1,5 @@
 module Emque
-  module Messages
+  module Producing
     VERSION = "0.0.1"
   end
 end

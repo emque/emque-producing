@@ -1,17 +1,14 @@
 PATH
   remote: .
   specs:
-    emquemessages (0.0.1)
-      activesupport (~> 3.2, >= 3.2.18)
+    emque-producing (0.0.1)
+      oj
       poseidon (= 0.0.4)
       virtus
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (3.2.19)
-      i18n (~> 0.6, >= 0.6.4)
-      multi_json (~> 1.0)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
@@ -23,10 +20,9 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
     equalizer (0.0.9)
-    i18n (0.6.11)
     ice_nine (0.11.0)
     method_source (0.8.2)
-    multi_json (1.10.1)
+    oj (2.10.2)
     poseidon (0.0.4)
     pry (0.9.12.4)
       coderay (~> 1.0)
@@ -54,7 +50,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.0)
-  emquemessages!
+  emque-producing!
   pry
   rake
   rspec

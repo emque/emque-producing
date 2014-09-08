@@ -1,17 +1,17 @@
 module Emque
-  module Producer
+  module Producing
     class Publisher
       def publish(topic, message, key = nil)
         begin
           msg = Poseidon::MessageToSend.new(topic, message, key)
-          Emque::Producer.poseidon_producer.send_messages([msg])
+          Emque::Producing.poseidon_producer.send_messages([msg])
         rescue => e
           handle_error(e)
         end
       end
 
       def handle_error(e)
-        Emque::Producer.configuration.error_handlers.each do |handler|
+        Emque::Producing.configuration.error_handlers.each do |handler|
           begin
             handler.call(e, nil)
           rescue => ex

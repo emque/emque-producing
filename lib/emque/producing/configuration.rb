@@ -1,5 +1,5 @@
 module Emque
-  module Producer
+  module Producing
     class Configuration
       attr_accessor :app_name
       attr_accessor :seed_brokers

@@ -1,6 +1,6 @@
 module Emque
-  module Messages
-    module Base
+  module Producing
+    module Message
       InvalidMessageError = Class.new(StandardError)
       MessagesNotSentError = Class.new(StandardError)
 
@@ -82,7 +82,7 @@ module Emque
         data.to_json
       end
 
-      def publish(publisher=Emque::Producer.publisher)
+      def publish(publisher=Emque::Producing.publisher)
         if valid?
           sent = publisher.publish(topic, to_json, partition_key)
           raise MessagesNotSentError.new unless sent
@@ -116,7 +116,7 @@ module Emque
       end
 
       def app_name
-        Emque::Producer.configuration.app_name || raise("Messages must have an app name configured.")
+        Emque::Producing.configuration.app_name || raise("Messages must have an app name configured.")
       end
 
       def public_attributes
