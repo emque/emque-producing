@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "poseidon", "0.0.4"
-  spec.add_dependency "activesupport", "~> 3.2", ">= 3.2.18"
+  spec.add_dependency "oj"
   spec.add_dependency "virtus"
 
   spec.add_development_dependency "bundler", "~> 1.0"

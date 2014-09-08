@@ -21,10 +21,6 @@ module Emque
           @message_type
         end
 
-        def from_json(json)
-          new(ActiveSupport::JSON.decode(json))
-        end
-
         def private_attribute(name, coercion=nil, opts={})
           @private_attrs ||= []
           @private_attrs << name
@@ -79,7 +75,7 @@ module Emque
 
       def to_json
         data = self.add_metadata
-        data.to_json
+        Oj.dump(data)
       end
 
       def publish(publisher=Emque::Producing.publisher)
