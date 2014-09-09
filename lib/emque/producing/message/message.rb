@@ -1,3 +1,5 @@
+require 'securerandom'
+
 module Emque
   module Producing
     module Message
@@ -119,7 +121,12 @@ module Emque
         public = self.class.attribute_set.select do |attr|
           attr && !self.class.private_attrs.include?(attr.name)
         end.map(&:name)
-        attributes.slice(*public)
+        slice_attributes(*public)
+      end
+
+      def slice_attributes(*keys)
+        keys.map! { |key| key.kind_of?(Symbol) ? key.to_s : key }
+        keys.each_with_object(Hash.new) { |k, hash| hash[k] = attributes[k] if attributes.has_key?(k) }
       end
     end
   end
