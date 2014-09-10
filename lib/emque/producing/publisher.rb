@@ -15,9 +15,9 @@ module Emque
           begin
             handler.call(e, nil)
           rescue => ex
-            logger.error "Producer error hander raised an error"
-            logger.error ex
-            logger.error ex.backtrace.join("\n") unless ex.backtrace.nil?
+            Emque::Producing.logger.error "Producer error hander raised an error"
+            Emque::Producing.logger.error ex
+            Emque::Producing.logger.error Array(ex.backtrace).join("\n")
           end
         end
       end
