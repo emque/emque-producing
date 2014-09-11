@@ -22,6 +22,14 @@ module Emque
       def publisher
         @publisher ||= Emque::Producing::Publisher.new
       end
+
+      def logger
+        Emque::Producing::Logging.logger
+      end
+
+      def logger=(log)
+        Emque::Producing::Logging.logger = log
+      end
     end
   end
 end
