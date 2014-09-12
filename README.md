@@ -1,9 +1,9 @@
 [ ![Codeship Status for
-teamsnap/emquemessages](https://www.codeship.io/projects/2ca7fd90-1785-0132-5f9d-7ab39a5c8237/status)](https://www.codeship.io/projects/34115)
+teamsnap/emque-producing](https://www.codeship.io/projects/2ca7fd90-1785-0132-5f9d-7ab39a5c8237/status)](https://www.codeship.io/projects/34115)
 
-# EmqueMessages
+# Emque Producing
 
-EmqueMessages is a gem to help define and produce [Kafka](http://kafka.apache.org/)
+Emque Producing is a gem to help define and produce [Kafka](http://kafka.apache.org/)
 messages for [Poseidon](https://github.com/bpot/poseidon) that will be
 consumed by [emque](https://github.com/teamsnap/emque) services.
 
