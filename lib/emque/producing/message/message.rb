@@ -125,8 +125,8 @@ module Emque
       end
 
       def slice_attributes(*keys)
-        keys.map! { |key| key.kind_of?(Symbol) ? key.to_s : key }
-        keys.each_with_object(Hash.new) { |k, hash| hash[k] = attributes[k] if attributes.has_key?(k) }
+        keys.map!(&:to_sym)
+        attributes.select { |key, value| keys.include?(key) }
       end
     end
   end

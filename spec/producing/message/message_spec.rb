@@ -29,7 +29,7 @@ describe Emque::Producing::Message do
     end
   end
 
-  describe "#as_json" do
+  describe "#to_json" do
     it "creates the metadata" do
       message = TestMessage.new(:test_id => 1)
       metadata = message.add_metadata[:metadata]
@@ -39,6 +39,13 @@ describe Emque::Producing::Message do
     it "can be transformed to json" do
       message = Oj.load(TestMessage.new().to_json)
       expect(message["metadata"]["app"]).to eql("apiv3")
+    end
+
+    it "includes valid attributes in json" do
+      produced_message = TestMessage.new(:test_id => 1)
+      json = produced_message.to_json
+      consumed_message = Oj.load(json)
+      expect(consumed_message["test_id"]).to eql(1)
     end
   end
 
