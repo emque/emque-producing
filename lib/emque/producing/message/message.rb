@@ -81,10 +81,14 @@ module Emque
       end
 
       def publish(publisher=Emque::Producing.publisher)
+        log "publishing...", true
         if valid?
+          log "valid...", true
           sent = publisher.publish(topic, to_json, partition_key)
+          log "sent #{sent}"
           raise MessagesNotSentError.new unless sent
         else
+          log "failed...", true
           raise InvalidMessageError.new(invalid_message)
         end
       end
@@ -115,6 +119,13 @@ module Emque
 
       def app_name
         Emque::Producing.configuration.app_name || raise("Messages must have an app name configured.")
+      end
+
+      def log(message, include_message = false)
+        if Emque::Producing.configuration.log_publish_message
+          message = "#{message} #{to_json}" if include_message
+          Emque::Producing.logger.info("MESSAGE LOG: #{message}")
+        end
       end
 
       def public_attributes
