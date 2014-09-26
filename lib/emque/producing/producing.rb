@@ -7,8 +7,8 @@ module Emque
 
       def configure
         yield(configuration)
-        self.poseidon_producer ||= Poseidon::Producer.new(configuration.seed_brokers,
-          "producer_#{host_name}_#{Process.pid}")
+        self.poseidon_producer ||= Poseidon::Producer.new(configuration.kafka_seed_brokers,
+          "producer_#{host_name}_#{Process.pid}", configuration.kafka_producer_options)
       end
 
       def configuration
