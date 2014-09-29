@@ -1,14 +1,11 @@
 module Emque
   module Producing
     class << self
-      attr_accessor :poseidon_producer
       attr_accessor :publisher
       attr_writer :configuration
 
       def configure
         yield(configuration)
-        self.poseidon_producer ||= Poseidon::Producer.new(configuration.kafka_seed_brokers,
-          "producer_#{host_name}_#{Process.pid}", configuration.kafka_producer_options)
       end
 
       def configuration
@@ -20,7 +17,18 @@ module Emque
       end
 
       def publisher
-        @publisher ||= Emque::Producing::Publisher.new
+        return @publisher unless @publisher.nil?
+
+        if (configuration.publishing_adapter == :kafka)
+          require "emque/producing/publisher/kafka"
+          @publisher = Emque::Producing::Publisher::Kafka.new
+        elsif (configuration.publishing_adapter == :rabbitmq)
+          require "emque/producing/publisher/rabbitmq"
+          @publisher = Emque::Producing::Publisher::RabbitMq.new
+        else
+          raise "No publisher configured"
+        end
+        @publisher
       end
 
       def logger
