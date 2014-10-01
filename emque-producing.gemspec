@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.platform      = Gem::Platform::RUBY
   spec.authors       = ["Emily Dobervich", "Ryan Williams"]
   spec.email         = ["emily@teamsnap.com", "ryan.williams@teamsnap.com"]
-  spec.summary       = %q{A gem for producing emque messages to Kafka}
-  spec.description   = %q{A gem for producing emque messages to Kafka}
+  spec.summary       = %q{Define and send messages to a variety of message brokers}
+  spec.description   = %q{Define and send messages to a variety of message brokers}
   spec.homepage      = ""
   spec.license       = "MIT"
   spec.required_ruby_version = '>= 1.9.3'

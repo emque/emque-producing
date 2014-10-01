@@ -3,13 +3,13 @@ teamsnap/emque-producing](https://www.codeship.io/projects/2ca7fd90-1785-0132-5f
 
 # Emque Producing
 
-Emque Producing is a gem to help define and produce [Kafka](http://kafka.apache.org/)
-messages for [Poseidon](https://github.com/bpot/poseidon) that will be
-consumed by [emque](https://github.com/teamsnap/emque) services.
+Define and send messages with Ruby to a variety of message brokers. Currently
+supported message brokers are [RabbitMQ](https://www.rabbitmq.com) and
+[Kafka](http://kafka.apache.org/).
 
-By splitting this from emque, applications that just want to produce messages
-can be relieved of the dependencies of running emque based services and have
-an easier time running on older versions of Ruby.
+This is a library that pairs nicely with [Emque
+Consuming](https://www.github.com/teamsnap/emque-consuming), a framework for
+consuming and routing messages to your code.
 
 ## Installation
 
@@ -27,11 +27,12 @@ Or install it yourself as:
 
 ## Usage
 
-    # configure
+    # configure (likely in a Rails initializer)
     require 'emque-producing'
     Emque::Producing.configure do |c|
       c.app_name = "app"
-      c.seed_brokers = ["localhost:9092"]
+      c.publishing_adapter = :rabbitmq
+      c.rabbitmq_options = { :url => "amqp://guest:guest@localhost:5672" }
       c.error_handlers << Proc.new {|ex,context|
        # notify/log
       }
@@ -54,6 +55,8 @@ Or install it yourself as:
 ## Requirements
 
 * Ruby 1.9.3 or higher
+* RabbitMQ 3.x
+* Bunny 1.4.x
 * Kafka 0.8.1
 * Poseidon 0.0.4
 
@@ -64,8 +67,6 @@ To run tests...
 ```
 rspec
 ```
-
-This will automatically download kafka for use in tests.
 
 ## Contributing
 
