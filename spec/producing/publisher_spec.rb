@@ -1,4 +1,5 @@
 require "spec_helper"
+require "emque/producing/publisher/kafka"
 
 describe Emque::Producing::Publisher do
   describe "#publish" do
@@ -11,8 +12,8 @@ describe Emque::Producing::Publisher do
           }
         end
         Emque::Producing.logger = nil
-        publisher = Emque::Producing::Publisher.new
-        publisher.publish("mytopic", "mymessage")
+        publisher = Emque::Producing::Publisher::Kafka.new
+        publisher.publish("mytopic", "message.type", "mymessage")
       end
     end
   end

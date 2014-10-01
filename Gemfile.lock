@@ -2,17 +2,21 @@ PATH
   remote: .
   specs:
     emque-producing (0.0.1)
-      oj
+      bunny (~> 1.4.1)
+      oj (~> 2.10.2)
       poseidon (= 0.0.4)
-      virtus
+      virtus (~> 1.0.3)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    amq-protocol (1.9.2)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
+    bunny (1.4.1)
+      amq-protocol (>= 1.9.2)
     coderay (1.1.0)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
@@ -52,5 +56,5 @@ DEPENDENCIES
   bundler (~> 1.0)
   emque-producing!
   pry
-  rake
+  rake (>= 3.0.0)
   rspec
