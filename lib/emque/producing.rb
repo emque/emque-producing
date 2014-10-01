@@ -1,6 +1,4 @@
 require "virtus"
-require "poseidon"
-require "bunny"
 require "oj"
 require "emque/producing/version"
 require "emque/producing/producing"

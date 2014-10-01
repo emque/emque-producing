@@ -1,3 +1,5 @@
+require "bunny"
+
 module Emque
   module Producing
     module Publisher

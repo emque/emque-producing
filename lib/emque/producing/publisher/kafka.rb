@@ -1,3 +1,5 @@
+require "poseidon"
+
 module Emque
   module Producing
     module Publisher

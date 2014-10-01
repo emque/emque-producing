@@ -21,13 +21,11 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "poseidon", "0.0.4"
-  spec.add_dependency "bunny", "~> 1.4.1"
   spec.add_dependency "oj", "~> 2.10.2"
   spec.add_dependency "virtus", "~> 1.0.3"
 
   spec.add_development_dependency "bundler", "~> 1.0"
-  spec.add_development_dependency "rake", ">= 3.0.0"
-  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rspec", ">= 3.0.0"
   spec.add_development_dependency "pry"
 end
