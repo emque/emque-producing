@@ -61,4 +61,4 @@ DEPENDENCIES
   poseidon (= 0.0.4)
   pry
   rake
-  rspec (>= 3.0.0)
+  rspec (~> 3.1)
