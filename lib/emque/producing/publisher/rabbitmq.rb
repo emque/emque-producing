@@ -10,18 +10,35 @@ module Emque
         end
 
         def publish(topic, message_type, message, key = nil)
-          begin
-            channel = @conn.create_channel
-            x = channel.fanout(topic, :durable => true, :auto_delete => false)
-            x.publish(message,
-                      :persistent => true,
-                      :type => message_type,
-                      :app_id => Emque::Producing.configuration.app_name,
-                      :content_type => "application/json")
-            channel.close
-          rescue => e
-            handle_error(e)
+          ch = @conn.create_channel
+          exchange = ch.fanout(topic, :durable => true, :auto_delete => false)
+
+          # Assumes all messages are mandatory in order to let callers know if
+          # the message was not sent. Uses publisher confirms to wait.
+          ch.confirm_select
+          sent = true
+          exchange.on_return do |return_info, properties, content|
+            sent = false
           end
+
+          exchange.publish(
+            message,
+            :mandatory => true,
+            :persistent => true,
+            :type => message_type,
+            :app_id => Emque::Producing.configuration.app_name,
+            :content_type => "application/json")
+
+          success = ch.wait_for_confirms
+          unless success
+            Emque::Producing.logger.warn("RabbitMQ Publisher: message was nacked")
+            ch.nacked_set.each do |n|
+              Emque::Producing.logger.warn("message id: #{n}")
+            end
+          end
+
+          ch.close
+          return sent
         end
       end
     end

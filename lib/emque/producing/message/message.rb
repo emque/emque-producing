@@ -86,7 +86,7 @@ module Emque
           log "valid...", true
           sent = publisher.publish(topic, message_type, to_json, partition_key)
           log "sent #{sent}"
-          #raise MessagesNotSentError.new unless sent
+          raise MessagesNotSentError.new unless sent
         else
           log "failed...", true
           raise InvalidMessageError.new(invalid_message)
