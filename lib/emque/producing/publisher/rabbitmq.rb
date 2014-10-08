@@ -1,16 +1,25 @@
 require "bunny"
+require "thread"
 
 module Emque
   module Producing
     module Publisher
       class RabbitMq < Emque::Producing::Publisher::Base
-        def initialize
-          @conn = Bunny.new Emque::Producing.configuration.rabbitmq_options[:url]
-          @conn.start
-        end
+        CONN = Bunny
+          .new(Emque::Producing.configuration.rabbitmq_options[:url])
+          .tap { |conn|
+            conn.start
+          }
+
+        CHANNEL_POOL = Queue
+          .new
+          .tap { |queue|
+            20.times { |i| queue << CONN.create_channel }
+          }
 
         def publish(topic, message_type, message, key = nil)
-          ch = @conn.create_channel
+          ch = CHANNEL_POOL.pop
+          ch.open if ch.closed?
           begin
             exchange = ch.fanout(topic, :durable => true, :auto_delete => false)
 
@@ -40,7 +49,7 @@ module Emque
 
             return sent
           ensure
-            ch.close unless ch.nil? || ch.closed?
+            CHANNEL_POOL << ch unless ch.nil?
           end
         end
       end
