@@ -1,4 +1,5 @@
-require 'securerandom'
+require "securerandom"
+require "socket"
 
 module Emque
   module Producing
