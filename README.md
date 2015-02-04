@@ -4,8 +4,7 @@ teamsnap/emque-producing](https://www.codeship.io/projects/2ca7fd90-1785-0132-5f
 # Emque Producing
 
 Define and send messages with Ruby to a variety of [message brokers](http://en.wikipedia.org/wiki/Message_broker).
-Currently supported message brokers are [RabbitMQ](https://www.rabbitmq.com) and
-[Kafka](http://kafka.apache.org/).
+The only currently supported message broker is [RabbitMQ](https://www.rabbitmq.com)
 
 This is a library that pairs nicely with [Emque
 Consuming](https://www.github.com/teamsnap/emque-consuming), a framework for
@@ -18,12 +17,6 @@ Add these lines to your application's Gemfile, depending on your message broker:
     # for RabbitMQ, bunny is used
     gem "emque-producing"
     gem "bunny", "~> 1.4.1"
-
-or
-
-    # for Kafka, poseidon is used
-    gem "emque-producing"
-    gem "poseidon", "0.0.4"
 
 And then execute:
 
@@ -41,8 +34,6 @@ Or install it yourself as:
       c.app_name = "app"
       c.publishing_adapter = :rabbitmq
       c.rabbitmq_options = { :url => "amqp://guest:guest@localhost:5672" }
-      #c.kafka_options = { :seed_brokers => [localhost:9092],
-      #                    :producer_options => {} }
       c.error_handlers << Proc.new {|ex,context|
        # notify/log
       }
@@ -67,8 +58,6 @@ Or install it yourself as:
 * Ruby 1.9.3 or higher
 * RabbitMQ 3.x
 * Bunny 1.4.x
-* Kafka 0.8.1
-* Poseidon 0.0.4
 
 ## Tests
 
