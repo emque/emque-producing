@@ -85,3 +85,8 @@ adapter which may be convenient in the case of CI environments.
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## Roadmap
+
+Kafka would make for a good adapter to be added to emque-producing. Anyone
+wishing to submit a PR can use the RabbitMQ adapter as a model.
