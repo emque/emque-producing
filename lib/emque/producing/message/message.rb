@@ -84,7 +84,7 @@ module Emque
         log "publishing...", true
         if valid?
           log "valid...", true
-          if Emque::Producing.configuration.publish_message
+          if Emque::Producing.configuration.publish_messages
             sent = publisher.publish(topic, message_type, to_json, partition_key)
             log "sent #{sent}"
             raise MessagesNotSentError.new unless sent
