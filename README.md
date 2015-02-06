@@ -78,6 +78,17 @@ To run tests...
 rspec
 ```
 
+If you would like to test the gem as part of your client, you can update the
+configuration option `publish_messages` to false like so:
+```ruby
+    Emque::Producing.configure do |c|
+      c.publish_messages = false
+    ...other options
+    end 
+```
+This will prevent Emque from actually attempting to make the connection to your
+adapter which may be convenient in the case of CI environments.
+
 ## Contributing
 
 1. Fork it ( http://github.com/teamsnap/emquemessages/fork )
