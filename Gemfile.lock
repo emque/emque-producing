@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    emque-producing (0.0.1)
+    emque-producing (0.0.2)
       oj (~> 2.10.2)
       virtus (~> 1.0.3)
 
