@@ -4,6 +4,20 @@ module Emque
       attr_accessor :publisher
       attr_writer :configuration
 
+      def message(opts = {})
+        with_changeset = opts.fetch(:with_changeset) { false }
+
+        Module.new do
+          define_singleton_method(:included) do |descendant|
+            if with_changeset
+              descendant.send(:include, ::Emque::Producing::MessageWithChangeset)
+            else
+              descendant.send(:include, ::Emque::Producing::Message)
+            end
+          end
+        end
+      end
+
       def configure
         yield(configuration)
       end

@@ -1,9 +1,40 @@
 require "spec_helper"
 require "virtus"
 require "emque/producing/message/message"
+require "emque/producing/message/message_with_changeset"
+
+class TestMessageWithChangeset
+  include Emque::Producing.message(:with_changeset => true)
+
+  topic "queue"
+  message_type "queue.new"
+
+  attribute :test_id, Integer, :required => true, :default => :build_id
+  private_attribute :extra, String, :default => "value"
+end
+
+class TestMessageWithChangesetCustomBuildId
+  include Emque::Producing.message(:with_changeset => true)
+
+  topic "queue"
+  message_type "queue.new"
+
+  attribute :test_uuid, Integer, :required => true, :default => :build_id
+  private_attribute :extra, String, :default => "value"
+
+  def build_id
+    if updated
+      updated.fetch("uuid") { updated[:uuid] }
+    elsif original
+      original.fetch("uuid") { original[:uuid] }
+    else
+      raise Emque::Producing::Message::InvalidMessageError
+    end
+  end
+end
 
 class TestMessage
-  include Emque::Producing::Message
+  include Emque::Producing.message
 
   topic "queue"
   message_type "queue.new"
@@ -13,19 +44,19 @@ class TestMessage
 end
 
 class MessageNoTopic
-  include Emque::Producing::Message
+  include Emque::Producing.message
   message_type "testing"
 end
 
 class MessageNoType
-  include Emque::Producing::Message
+  include Emque::Producing.message
   topic "testing"
 end
 
 describe Emque::Producing::Message do
   before do
     Emque::Producing.configure do |c|
-      c.app_name = "apiv3"
+      c.app_name = "my_app"
     end
   end
 
@@ -33,12 +64,12 @@ describe Emque::Producing::Message do
     it "creates the metadata" do
       message = TestMessage.new(:test_id => 1)
       metadata = message.add_metadata[:metadata]
-      expect(metadata[:app]).to eql("apiv3")
+      expect(metadata[:app]).to eql("my_app")
     end
 
     it "can be transformed to json" do
       message = Oj.load(TestMessage.new().to_json)
-      expect(message["metadata"]["app"]).to eql("apiv3")
+      expect(message["metadata"]["app"]).to eql("my_app")
     end
 
     it "includes valid attributes in json" do
@@ -84,5 +115,103 @@ describe Emque::Producing::Message do
   it "has the sub type in the metadata" do
     message = TestMessage.new()
     expect(message.add_metadata[:metadata][:type]).to eql("queue.new")
+  end
+
+  context "message with changeset" do
+    describe "custom #build_id behavior" do
+      it "raises an InvalidMessageError when no updated or original object is passed in" do
+        expect{TestMessageWithChangesetCustomBuildId.new(:not_the_id => 1)}.to raise_error(
+          Emque::Producing::Message::InvalidMessageError
+        )
+      end
+
+      it "defaults to the id of the original object if not passed an updated object" do
+        produced_message = TestMessageWithChangesetCustomBuildId.new(
+          :original => {:uuid => 3, :attr => "old_value"}
+        )
+        json = produced_message.to_json
+        consumed_message = Oj.load(json)
+        expect(consumed_message["test_uuid"]).to eql(3)
+      end
+
+      it "defaults to the id of the updated object if passed an id" do
+        produced_message = TestMessageWithChangesetCustomBuildId.new(
+          :original => {:uuid => 1, :attr => "old_value"},
+          :updated => {:uuid => 2, :attr => "new_value"}
+        )
+        json = produced_message.to_json
+        consumed_message = Oj.load(json)
+        expect(consumed_message["test_uuid"]).to eql(2)
+      end
+    end
+
+    describe "default #build_id behavior" do
+      it "raises an InvalidMessageError when no updated or original object is passed in" do
+        expect{TestMessageWithChangeset.new(:not_the_id => 1)}.to raise_error(
+          Emque::Producing::Message::InvalidMessageError
+        )
+      end
+
+      it "defaults to the id of the original object if not passed an updated object" do
+        produced_message = TestMessageWithChangeset.new(
+          :original => {:id => 3, :attr => "old_value"}
+        )
+        json = produced_message.to_json
+        consumed_message = Oj.load(json)
+        expect(consumed_message["test_id"]).to eql(3)
+      end
+
+      it "defaults to the id of the updated object if passed an id" do
+        produced_message = TestMessageWithChangeset.new(
+          :original => {:id => 1, :attr => "old_value"},
+          :updated => {:id => 2, :attr => "new_value"}
+        )
+        json = produced_message.to_json
+        consumed_message = Oj.load(json)
+        expect(consumed_message["test_id"]).to eql(2)
+      end
+    end
+
+    it "defaults to a changeset of 'created' when no updated or original is passed in" do
+      produced_message = TestMessageWithChangeset.new(:test_id => 1)
+      json = produced_message.to_json
+      consumed_message = Oj.load(json)
+      expect(consumed_message["change_set"]).to eql(
+        {"original"=>{}, "updated"=>{}, "delta"=>"_created"}
+      )
+    end
+
+    it "indicates a deleted object when the update is not passed in" do
+      produced_message = TestMessageWithChangeset.new(
+        :test_id => 1,
+        :original => {:attr => "old_value"}
+      )
+      json = produced_message.to_json
+      consumed_message = Oj.load(json)
+      expect(consumed_message["change_set"]).to eql(
+        {"original"=>{"attr"=>"old_value"}, "updated"=>{}, "delta"=>"_deleted"}
+      )
+    end
+
+    it "returns a changeset when update and original values are passed in" do
+      produced_message = TestMessageWithChangeset.new(
+        :test_id => 1,
+        :updated => {:attr => "new_value"},
+        :original => {:attr => "old_value"}
+      )
+      json = produced_message.to_json
+      consumed_message = Oj.load(json)
+      expect(consumed_message["change_set"]).to eql(
+        {
+          "original"=>{"attr"=>"old_value"},
+          "updated"=>{"attr"=>"new_value"},
+          "delta"=>{
+            "attr"=>{
+              "original"=>"old_value", "updated"=>"new_value"
+            }
+          }
+        }
+      )
+    end
   end
 end
