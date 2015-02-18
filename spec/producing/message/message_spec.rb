@@ -3,16 +3,6 @@ require "virtus"
 require "emque/producing/message/message"
 require "emque/producing/message/message_with_changeset"
 
-class TestMessageWithChangeset
-  include Emque::Producing.message(:with_changeset => true)
-
-  topic "queue"
-  message_type "queue.new"
-
-  attribute :test_id, Integer, :required => true, :default => :build_id
-  private_attribute :extra, String, :default => "value"
-end
-
 class TestMessageWithChangesetCustomBuildId
   include Emque::Producing.message(:with_changeset => true)
 
@@ -53,10 +43,66 @@ class MessageNoType
   topic "testing"
 end
 
+class TestMessageWithChangeset
+  include Emque::Producing.message(:with_changeset => true)
+
+  topic "queue"
+  message_type "queue.new"
+
+  attribute :test_id, Integer, :required => true, :default => :build_id
+  private_attribute :extra, String, :default => "value"
+  translate_changeset_attrs(
+    :type => :event_type, :date => :event_date, :not_an_attr => :still_not_an_attr
+  )
+end
+
 describe Emque::Producing::Message do
-  before do
-    Emque::Producing.configure do |c|
-      c.app_name = "my_app"
+  before { Emque::Producing.configure { |c| c.app_name = "my_app" } }
+
+  describe "translating changeset attr names" do
+    it "allows a client to change attr names in the changeset message" do
+      produced_message = TestMessageWithChangeset.new(
+        :test_id => 1,
+        :original => {"type" => "Game", "date" => "2000-01-02"},
+        :updated => {"type" => "Event", "date" => "2000-01-01"}
+      )
+      json = produced_message.to_json
+      consumed_message = Oj.load(json)
+      expect(consumed_message["change_set"]).to eql(
+        {
+          "original"=>{"event_type"=>"Game", "event_date"=>"2000-01-02"},
+          "updated"=>{"event_type"=>"Event", "event_date"=>"2000-01-01"},
+          "delta"=>{
+            "event_type"=>{
+              "original"=>"Game", "updated"=>"Event"
+            },
+            "event_date"=>{
+              "original"=>"2000-01-02", "updated"=>"2000-01-01"
+            }
+          }
+        }
+      )
+    end
+
+    it "does not add new attr if the old attr is not present" do
+      produced_message = TestMessageWithChangeset.new(
+        :test_id => 1,
+        :updated => {"type" => "Event"},
+        :original => {"type" => "Game"}
+      )
+      json = produced_message.to_json
+      consumed_message = Oj.load(json)
+      expect(consumed_message["change_set"]).to eql(
+        {
+          "original"=>{"event_type"=>"Game"},
+          "updated"=>{"event_type"=>"Event"},
+          "delta"=>{
+            "event_type"=>{
+              "original"=>"Game", "updated"=>"Event"
+            }
+          }
+        }
+      )
     end
   end
 
