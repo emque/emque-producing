@@ -53,6 +53,10 @@ Or install it yourself as:
     message = MyMessage.new({:first_property => 1, :another_property => "another"})
     message.publish
 
+For a more thorough guide to creating new messages and/or message producing
+applications, [please read the wiki
+entry](https://github.com/teamsnap/emque-producing/wiki/Creating-New-Producing-Applications)
+
 ## Requirements
 
 * Ruby 1.9.3 or higher
