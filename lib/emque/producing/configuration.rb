@@ -14,7 +14,10 @@ module Emque
         @error_handlers = []
         @log_publish_message = false
         @publish_messages = true
-        @rabbitmq_options = { :url => "amqp://guest:guest@localhost:5672" }
+        @rabbitmq_options = {
+          :url => "amqp://guest:guest@localhost:5672",
+          :requires_confirmation => true
+        }
       end
     end
   end

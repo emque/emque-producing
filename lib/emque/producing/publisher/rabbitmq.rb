@@ -23,12 +23,14 @@ module Emque
           begin
             exchange = ch.fanout(topic, :durable => true, :auto_delete => false)
 
-            # Assumes all messages are mandatory in order to let callers know if
-            # the message was not sent. Uses publisher confirms to wait.
-            ch.confirm_select
+            requires_confirmation = Emque::Producing.configuration.rabbitmq_options[:requires_confirmation]
             sent = true
-            exchange.on_return do |return_info, properties, content|
-              sent = false
+
+            if requires_confirmation
+              ch.confirm_select
+              exchange.on_return do |return_info, properties, content|
+                sent = false
+              end
             end
 
             exchange.publish(
@@ -39,11 +41,13 @@ module Emque
               :app_id => Emque::Producing.configuration.app_name,
               :content_type => "application/json")
 
-            success = ch.wait_for_confirms
-            unless success
-              Emque::Producing.logger.warn("RabbitMQ Publisher: message was nacked")
-              ch.nacked_set.each do |n|
-                Emque::Producing.logger.warn("message id: #{n}")
+            if requires_confirmation
+              success = ch.wait_for_confirms
+              unless success
+                Emque::Producing.logger.warn("RabbitMQ Publisher: message was nacked")
+                ch.nacked_set.each do |n|
+                  Emque::Producing.logger.warn("message id: #{n}")
+                end
               end
             end
 
