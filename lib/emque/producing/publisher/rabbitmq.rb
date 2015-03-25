@@ -22,20 +22,24 @@ module Emque
           ch.open if ch.closed?
           begin
             exchange = ch.fanout(topic, :durable => true, :auto_delete => false)
-
-            requires_confirmation = Emque::Producing.configuration.rabbitmq_options[:requires_confirmation]
             sent = true
+            requires_confirmation = Emque::Producing.configuration.rabbitmq_options[:confirm_messages]
+            is_mandatory = Emque::Producing.configuration.rabbitmq_options[:mandatory_messages]
 
             if requires_confirmation
-              ch.confirm_select
+              ch.confirm_select unless ch.using_publisher_confirmations?
+            end
+
+            if is_mandatory
               exchange.on_return do |return_info, properties, content|
+                Emque::Producing.logger.warn("App [#{properties[:app_id]}] message was returned from exchange [#{return_info[:exchange]}]")
                 sent = false
               end
             end
 
             exchange.publish(
               message,
-              :mandatory => true,
+              :mandatory => is_mandatory,
               :persistent => true,
               :type => message_type,
               :app_id => Emque::Producing.configuration.app_name,

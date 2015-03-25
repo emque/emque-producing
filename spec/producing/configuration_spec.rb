@@ -19,7 +19,11 @@ describe Emque::Producing::Configuration do
     }.to raise_error
   end
 
-  it "rabbitmq requires_confirmation default is true" do
-    expect(subject.rabbitmq_options[:requires_confirmation]).to eq true
+  it "rabbitmq mandatory_messages default is true" do
+    expect(subject.rabbitmq_options[:mandatory_messages]).to eq true
+  end
+
+  it "rabbitmq confirm_messages default is true" do
+    expect(subject.rabbitmq_options[:confirm_messages]).to eq true
   end
 end
