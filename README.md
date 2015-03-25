@@ -33,7 +33,7 @@ Or install it yourself as:
     Emque::Producing.configure do |c|
       c.app_name = "app"
       c.publishing_adapter = :rabbitmq
-      c.rabbitmq_options = { :url => "amqp://guest:guest@localhost:5672" }
+      c.rabbitmq_options[:url] = "amqp://guest:guest@localhost:5672"
       c.error_handlers << Proc.new {|ex,context|
        # notify/log
       }
