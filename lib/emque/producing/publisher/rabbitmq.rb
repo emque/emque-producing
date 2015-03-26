@@ -17,14 +17,12 @@ module Emque
             20.times { |i| queue << CONN.create_channel }
           }
 
-        def publish(topic, message_type, message, key = nil)
+        def publish(topic, message_type, message, requires_confirmation, is_mandatory, key = nil)
           ch = CHANNEL_POOL.pop
           ch.open if ch.closed?
           begin
             exchange = ch.fanout(topic, :durable => true, :auto_delete => false)
             sent = true
-            requires_confirmation = Emque::Producing.configuration.rabbitmq_options[:confirm_messages]
-            is_mandatory = Emque::Producing.configuration.rabbitmq_options[:mandatory_messages]
 
             if requires_confirmation
               ch.confirm_select unless ch.using_publisher_confirmations?

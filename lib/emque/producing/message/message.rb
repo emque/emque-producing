@@ -24,6 +24,22 @@ module Emque
           @message_type
         end
 
+        def mandatory(name)
+          @mandatory = name
+        end
+
+        def read_mandatory
+          @mandatory || true
+        end
+
+        def requires_confirmation(name)
+          @requires_confirmation = name
+        end
+
+        def read_requires_confirmation
+          @requires_confirmation || true
+        end
+
         def private_attribute(name, coercion=nil, opts={})
           @private_attrs ||= []
           @private_attrs << name
@@ -64,6 +80,14 @@ module Emque
         self.class.read_message_type
       end
 
+      def mandatory
+        self.class.read_mandatory
+      end
+
+      def requires_confirmation
+        self.class.read_requires_confirmation
+      end
+
       def valid?
         invalid_attributes.empty? && topic && message_type
       end
@@ -86,7 +110,9 @@ module Emque
         if valid?
           log "valid...", true
           if Emque::Producing.configuration.publish_messages
-            sent = publisher.publish(topic, message_type, to_json, partition_key)
+            sent = publisher.publish(
+              topic, message_type, to_json, mandatory, requires_confirmation, partition_key
+            )
             log "sent #{sent}"
             raise MessagesNotSentError.new unless sent
           end
