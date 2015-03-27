@@ -24,6 +24,18 @@ module Emque
           @message_type
         end
 
+        def raise_on_failure(name)
+          @raise_on_failure = name
+        end
+
+        def read_raise_on_failure
+          if @raise_on_failure.nil?
+            true
+          else
+            @raise_on_failure
+          end
+        end
+
         def private_attribute(name, coercion=nil, opts={})
           @private_attrs ||= []
           @private_attrs << name
@@ -64,6 +76,10 @@ module Emque
         self.class.read_message_type
       end
 
+      def raise_on_failure?
+        self.class.read_raise_on_failure
+      end
+
       def valid?
         invalid_attributes.empty? && topic && message_type
       end
@@ -88,7 +104,9 @@ module Emque
           if Emque::Producing.configuration.publish_messages
             sent = publisher.publish(topic, message_type, to_json, partition_key)
             log "sent #{sent}"
-            raise MessagesNotSentError.new unless sent
+            if raise_on_failure? && !sent
+              raise MessagesNotSentError.new
+            end
           end
         else
           log "failed...", true

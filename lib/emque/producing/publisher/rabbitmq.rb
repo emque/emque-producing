@@ -27,7 +27,9 @@ module Emque
             # the message was not sent. Uses publisher confirms to wait.
             ch.confirm_select
             sent = true
+
             exchange.on_return do |return_info, properties, content|
+              Emque::Producing.logger.warn("App [#{properties[:app_id]}] message was returned from exchange [#{return_info[:exchange]}]")
               sent = false
             end
 

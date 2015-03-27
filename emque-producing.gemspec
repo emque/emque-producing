@@ -21,12 +21,12 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "oj",        "~> 2.11"
-  spec.add_dependency "virtus",    "~> 1.0"
+  spec.add_dependency "oj",        "~> 2.11.4"
+  spec.add_dependency "virtus",    "~> 1.0.4"
 
   spec.add_development_dependency "bundler", "~> 1.7"
-  spec.add_development_dependency "rake",    "~> 10.4"
-  spec.add_development_dependency "rspec", "~> 3.2"
+  spec.add_development_dependency "rake",    "~> 10.4.2"
+  spec.add_development_dependency "rspec",   "~> 3.2.0"
   spec.add_development_dependency "pry"
-  spec.add_development_dependency "bunny", "~> 1.7"
+  spec.add_development_dependency "bunny", "~> 1.7.0"
 end

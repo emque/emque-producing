@@ -12,4 +12,10 @@ describe Emque::Producing::Configuration do
     subject.app_name = "my app"
     expect(subject.app_name).to eq "my app"
   end
+
+  it "does not allow rabbitmq_options to be overwritten" do
+    expect {
+      subject.rabbitmq_options = {:requires_confirmation => false}
+    }.to raise_error
+  end
 end
