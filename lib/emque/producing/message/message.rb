@@ -24,20 +24,16 @@ module Emque
           @message_type
         end
 
-        def mandatory(name)
-          @mandatory = name
+        def raise_message_failure(name)
+          @raise_message_failure = name
         end
 
-        def read_mandatory
-          @mandatory || true
-        end
-
-        def requires_confirmation(name)
-          @requires_confirmation = name
-        end
-
-        def read_requires_confirmation
-          @requires_confirmation || true
+        def read_raise_message_failure
+          if @raise_message_failure.nil?
+            true
+          else
+            @raise_message_failure
+          end
         end
 
         def private_attribute(name, coercion=nil, opts={})
@@ -80,12 +76,8 @@ module Emque
         self.class.read_message_type
       end
 
-      def mandatory
-        self.class.read_mandatory
-      end
-
-      def requires_confirmation
-        self.class.read_requires_confirmation
+      def raise_message_failure
+        self.class.read_raise_message_failure
       end
 
       def valid?
@@ -111,7 +103,7 @@ module Emque
           log "valid...", true
           if Emque::Producing.configuration.publish_messages
             sent = publisher.publish(
-              topic, message_type, to_json, mandatory, requires_confirmation, partition_key
+              topic, message_type, to_json, raise_message_failure, partition_key
             )
             log "sent #{sent}"
             raise MessagesNotSentError.new unless sent
