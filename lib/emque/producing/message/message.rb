@@ -24,15 +24,15 @@ module Emque
           @message_type
         end
 
-        def raise_message_failure(name)
-          @raise_message_failure = name
+        def raise_on_failure(name)
+          @raise_on_failure = name
         end
 
-        def read_raise_message_failure
-          if @raise_message_failure.nil?
+        def read_raise_on_failure
+          if @raise_on_failure.nil?
             true
           else
-            @raise_message_failure
+            @raise_on_failure
           end
         end
 
@@ -76,8 +76,8 @@ module Emque
         self.class.read_message_type
       end
 
-      def raise_message_failure
-        self.class.read_raise_message_failure
+      def raise_on_failure?
+        self.class.read_raise_on_failure
       end
 
       def valid?
@@ -104,7 +104,7 @@ module Emque
           if Emque::Producing.configuration.publish_messages
             sent = publisher.publish(topic, message_type, to_json, partition_key)
             log "sent #{sent}"
-            if raise_message_failure && !sent
+            if raise_on_failure? && !sent
               raise MessagesNotSentError.new
             end
           end
