@@ -17,36 +17,35 @@ module Emque
             20.times { |i| queue << CONN.create_channel }
           }
 
-        def publish(topic, message_type, message, raise_message_failure, key = nil)
+        def publish(topic, message_type, message, key = nil)
           ch = CHANNEL_POOL.pop
           ch.open if ch.closed?
           begin
             exchange = ch.fanout(topic, :durable => true, :auto_delete => false)
+
+            # Assumes all messages are mandatory in order to let callers know if
+            # the message was not sent. Uses publisher confirms to wait.
+            ch.confirm_select
             sent = true
 
-            if raise_message_failure
-              ch.confirm_select unless ch.using_publisher_confirmations?
-              exchange.on_return do |return_info, properties, content|
-                Emque::Producing.logger.warn("App [#{properties[:app_id]}] message was returned from exchange [#{return_info[:exchange]}]")
-                sent = false
-              end
+            exchange.on_return do |return_info, properties, content|
+              Emque::Producing.logger.warn("App [#{properties[:app_id]}] message was returned from exchange [#{return_info[:exchange]}]")
+              sent = false
             end
 
             exchange.publish(
               message,
-              :mandatory => raise_message_failure,
+              :mandatory => true,
               :persistent => true,
               :type => message_type,
               :app_id => Emque::Producing.configuration.app_name,
               :content_type => "application/json")
 
-            if raise_message_failure
-              success = ch.wait_for_confirms
-              unless success
-                Emque::Producing.logger.warn("RabbitMQ Publisher: message was nacked")
-                ch.nacked_set.each do |n|
-                  Emque::Producing.logger.warn("message id: #{n}")
-                end
+            success = ch.wait_for_confirms
+            unless success
+              Emque::Producing.logger.warn("RabbitMQ Publisher: message was nacked")
+              ch.nacked_set.each do |n|
+                Emque::Producing.logger.warn("message id: #{n}")
               end
             end
 

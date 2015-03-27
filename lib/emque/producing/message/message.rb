@@ -102,11 +102,11 @@ module Emque
         if valid?
           log "valid...", true
           if Emque::Producing.configuration.publish_messages
-            sent = publisher.publish(
-              topic, message_type, to_json, raise_message_failure, partition_key
-            )
+            sent = publisher.publish(topic, message_type, to_json, partition_key)
             log "sent #{sent}"
-            raise MessagesNotSentError.new unless sent
+            if raise_message_failure && !sent
+              raise MessagesNotSentError.new
+            end
           end
         else
           log "failed...", true
