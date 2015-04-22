@@ -53,6 +53,36 @@ Or install it yourself as:
     message = MyMessage.new({:first_property => 1, :another_property => "another"})
     message.publish
 
+    # create a message class including changesets
+    class MyChangesetMessage
+      include Emque::Producing.message(:with_changeset => true)
+      topic "topic1"
+      message_type "mymessage.new"
+
+      # Need to override an attribute name in the changeset? Simply define
+      # the old name and new name here. This can be useful for ensuring
+      # messages are consistent across varying producers.
+      translate_changeset_attrs :old_attr_name => :new_attr_name
+    end
+
+    produced_message = TestMessageWithChangeset.new(
+      :updated => {:old_attr_name => "Event"},
+      :original => {:old_attr_name => "Game"}
+    )
+    json = produced_message.to_json
+    consumed_message = Oj.load(json)
+    expect(consumed_message["change_set"]).to eql(
+      {
+        "original"=>{"new_attr_name"=>"Game"},
+        "updated"=>{"new_attr_name"=>"Event"},
+        "delta"=>{
+          "new_attr_name"=>{
+            "original"=>"Game", "updated"=>"Event"
+          }
+        }
+      }
+    )
+
 For a more thorough guide to creating new messages and/or message producing
 applications, [please read the wiki
 entry](https://github.com/teamsnap/emque-producing/wiki/Creating-New-Producing-Applications)
@@ -77,7 +107,7 @@ configuration option `publish_messages` to false like so:
     Emque::Producing.configure do |c|
       c.publish_messages = false
     ...other options
-    end 
+    end
 ```
 This will prevent Emque from actually attempting to make the connection to your
 adapter which may be convenient in the case of CI environments.
