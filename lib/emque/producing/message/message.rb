@@ -36,6 +36,14 @@ module Emque
           end
         end
 
+        def ignored_exceptions(*ignored_exceptions)
+          @ignored_exceptions = ignored_exceptions
+        end
+
+        def read_ignored_exceptions
+          (Array(@ignored_exceptions) + Emque::Producing.configuration.ignored_exceptions).uniq
+        end
+
         def private_attribute(name, coercion=nil, opts={})
           @private_attrs ||= []
           @private_attrs << name
@@ -80,6 +88,10 @@ module Emque
         self.class.read_raise_on_failure
       end
 
+      def ignored_exceptions
+        self.class.read_ignored_exceptions
+      end
+
       def valid?
         invalid_attributes.empty? && topic && message_type
       end
@@ -97,20 +109,25 @@ module Emque
         Oj.dump(data, :mode => :compat)
       end
 
-      def publish(publisher=Emque::Producing.publisher)
+      def publish(publisher=nil)
+        publisher ||= Emque::Producing.publisher
         log "publishing...", true
         if valid?
           log "valid...", true
           if Emque::Producing.configuration.publish_messages
             sent = publisher.publish(topic, message_type, to_json, partition_key)
             log "sent #{sent}"
-            if raise_on_failure? && !sent
-              raise MessagesNotSentError.new
-            end
+            raise MessagesNotSentError.new unless sent
           end
         else
           log "failed...", true
           raise InvalidMessageError.new(invalid_message)
+        end
+      rescue *ignored_exceptions => error
+        if raise_on_failure?
+          raise
+        else
+          log "failed ignoring exception... #{error}", true
         end
       end
 

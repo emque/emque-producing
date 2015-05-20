@@ -56,6 +56,32 @@ class TestMessageWithChangeset
   )
 end
 
+class TestMessageDontRaiseOnFailure
+  include Emque::Producing.message
+
+  IgnoreThisError = Class.new(StandardError)
+  DontIgnoreThisError = Class.new(StandardError)
+
+  topic "queue"
+  message_type "queue.new"
+
+  ignored_exceptions IgnoreThisError
+
+  raise_on_failure false
+end
+
+class TestPublisher
+  InvalidMessageError = Class.new(StandardError)
+  TimeoutMessageError = Class.new(StandardError)
+
+  Emque::Producing.configure do |c|
+    c.ignored_exceptions = c.ignored_exceptions + [InvalidMessageError, TimeoutMessageError]
+  end
+
+  def publish(topic, message_type, message, key = nil)
+  end
+end
+
 describe Emque::Producing::Message do
   before { Emque::Producing.configure { |c| c.app_name = "my_app" } }
 
@@ -258,6 +284,67 @@ describe Emque::Producing::Message do
           }
         }
       )
+    end
+  end
+
+  context "raise_on_failure" do
+    describe "when false" do
+      let(:message) { TestMessageDontRaiseOnFailure.new() }
+      let(:publisher) { TestPublisher.new }
+
+      it "catches exceptions from publisher" do
+        allow(Emque::Producing).to receive(:publisher) { raise TestPublisher::InvalidMessageError }
+
+        expect{message.publish()}.not_to raise_error
+      end
+
+      it "catches exceptions from publish" do
+        allow(publisher).to receive(:publish) { raise TestPublisher::TimeoutMessageError }
+
+        expect{message.publish(publisher)}.not_to raise_error
+      end
+
+      it "catches exceptions when publish doesn't send" do
+        allow(publisher).to receive(:publish) { false }
+
+        expect{message.publish(publisher)}.not_to raise_error
+      end
+
+      it "catches exceptions when publish doesn't send" do
+        allow(publisher).to receive(:publish) { raise TestMessageDontRaiseOnFailure::IgnoreThisError }
+
+        expect{message.publish(publisher)}.not_to raise_error
+      end
+
+      it "doesnt catch an exceptions that isn't in the " do
+        allow(publisher).to receive(:publish) { raise TestMessageDontRaiseOnFailure::DontIgnoreThisError }
+
+        expect{message.publish(publisher)}.to raise_error(TestMessageDontRaiseOnFailure::DontIgnoreThisError)
+      end
+
+    end
+
+    describe "when true" do
+      let(:message) { TestMessage.new(:test_id => 1) }
+      let(:publisher) { TestPublisher.new }
+
+      it "doesn't catch exceptions from publisher" do
+        allow(Emque::Producing).to receive(:publisher) { raise TestPublisher::InvalidMessageError }
+
+        expect{message.publish()}.to raise_error(TestPublisher::InvalidMessageError)
+      end
+
+      it "doesn't catch exceptions from publish" do
+        allow(publisher).to receive(:publish) { raise TestPublisher::TimeoutMessageError }
+
+        expect{message.publish(publisher)}.to raise_error(TestPublisher::TimeoutMessageError)
+      end
+
+      it "doesn't catch exceptions when publish doesn't send" do
+        allow(publisher).to receive(:publish) { false }
+
+        expect{message.publish(publisher)}.to raise_error(Emque::Producing::Message::MessagesNotSentError)
+      end
     end
   end
 end

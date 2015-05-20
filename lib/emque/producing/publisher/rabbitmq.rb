@@ -5,6 +5,10 @@ module Emque
   module Producing
     module Publisher
       class RabbitMq < Emque::Producing::Publisher::Base
+        Emque::Producing.configure do |c|
+          c.ignored_exceptions = c.ignored_exceptions + [Bunny::Exception, Timeout::Error]
+        end
+
         CONN = Bunny
           .new(Emque::Producing.configuration.rabbitmq_options[:url])
           .tap { |conn|
