@@ -7,6 +7,7 @@ module Emque
       attr_accessor :log_publish_message
       attr_accessor :publish_messages
       attr_reader :rabbitmq_options
+      attr_accessor :ignored_exceptions
 
       def initialize
         @app_name = ""
@@ -17,6 +18,7 @@ module Emque
         @rabbitmq_options = {
           :url => "amqp://guest:guest@localhost:5672"
         }
+        @ignored_exceptions = [Emque::Producing::Message::MessagesNotSentError]
       end
     end
   end
