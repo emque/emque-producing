@@ -64,7 +64,7 @@ module Emque
       end
 
       def deep_copy(attr_set)
-        Oj.load(Oj.dump(attr_set))
+        Oj.load(Oj.dump(attr_set, :mode => :object), :mode => :object)
       end
 
       def translate(attr_set)
