@@ -1,5 +1,4 @@
-[ ![Codeship Status for
-teamsnap/emque-producing](https://www.codeship.io/projects/2ca7fd90-1785-0132-5f9d-7ab39a5c8237/status)](https://www.codeship.io/projects/34115)
+[![Build Status](https://travis-ci.org/emque/emque-producing.png)](https://travis-ci.org/emque/emque-producing)
 
 # Emque Producing
 
