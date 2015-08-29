@@ -43,6 +43,27 @@ class MessageNoType
   topic "testing"
 end
 
+class MessageAttributeRequiredUnset
+  include Emque::Producing.message
+  topic "testing"
+  message_type "testing"
+  attribute :test_id, String
+end
+
+class MessageAttributeRequiredTrue
+  include Emque::Producing.message
+  topic "testing"
+  message_type "testing"
+  attribute :test_id, String, :required => true
+end
+
+class MessageAttributeRequiredFalse
+  include Emque::Producing.message
+  topic "testing"
+  message_type "testing"
+  attribute :test_id, String, :required => false
+end
+
 class TestMessageWithChangeset
   include Emque::Producing.message(:with_changeset => true)
 
@@ -84,6 +105,29 @@ end
 
 describe Emque::Producing::Message do
   before { Emque::Producing.configure { |c| c.app_name = "my_app" } }
+
+  describe "#valid?" do
+    context "when attribute required option is not set" do
+      it "attribute is not required" do
+        message = MessageAttributeRequiredUnset.new
+        expect(message.valid?).to be
+      end
+    end
+
+    context "when attribute required is true" do
+      it "attribute is required" do
+        message = MessageAttributeRequiredTrue.new
+        expect(message.valid?).to_not be
+      end
+    end
+
+    context "when attribute required is false" do
+      it "attribute is not required" do
+        message = MessageAttributeRequiredFalse.new
+        expect(message.valid?).to be
+      end
+    end
+  end
 
   describe "translating changeset attr names" do
     it "allows a client to change attr names in the changeset message" do
