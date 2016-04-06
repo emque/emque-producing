@@ -1,5 +1,7 @@
 module Emque
   module Producing
+    ConfigurationError = Class.new(StandardError)
+
     class Configuration
       attr_accessor :app_name
       attr_accessor :publishing_adapter
@@ -8,6 +10,7 @@ module Emque
       attr_accessor :publish_messages
       attr_reader :rabbitmq_options
       attr_accessor :ignored_exceptions
+      attr_reader :middleware
 
       def initialize
         @app_name = ""
@@ -19,6 +22,19 @@ module Emque
           :url => "amqp://guest:guest@localhost:5672"
         }
         @ignored_exceptions = [Emque::Producing::Message::MessagesNotSentError]
+        @middleware = []
+      end
+
+      def use(callable)
+        unless callable.respond_to?(:call) and callable.arity == 1
+          raise(
+            ConfigurationError,
+            "#{self.class.name}#use must receive a callable object with an " +
+            "arity of one."
+          )
+        end
+
+        @middleware << callable
       end
     end
   end

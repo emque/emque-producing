@@ -20,6 +20,10 @@ module Emque
           @message_type = name
         end
 
+        def middleware
+          @middleware || []
+        end
+
         def read_message_type
           @message_type
         end
@@ -52,6 +56,19 @@ module Emque
 
         def private_attrs
           Array(@private_attrs)
+        end
+
+        def use(callable)
+          unless callable.respond_to?(:call) and callable.arity == 1
+            raise(
+              ConfigurationError,
+              "#{self.class.name}#use must receive a callable object with an " +
+              "arity of one."
+            )
+          end
+
+          @middleware ||= []
+          @middleware << callable
         end
       end
 
@@ -115,7 +132,8 @@ module Emque
         if valid?
           log "valid...", true
           if Emque::Producing.configuration.publish_messages
-            sent = publisher.publish(topic, message_type, to_json, partition_key)
+            message = process_middleware(to_json)
+            sent = publisher.publish(topic, message_type, message, partition_key)
             log "sent #{sent}"
             raise MessagesNotSentError.new unless sent
           end
@@ -163,6 +181,24 @@ module Emque
         if Emque::Producing.configuration.log_publish_message
           message = "#{message} #{to_json}" if include_message
           Emque::Producing.logger.info("MESSAGE LOG: #{message}")
+        end
+      end
+
+      def middleware
+        self.class.middleware + Emque::Producing.configuration.middleware
+      end
+
+      def middleware?
+        middleware.count > 0
+      end
+
+      def process_middleware(str)
+        if middleware?
+          middleware.inject(str) { |compiled, callable|
+            callable.call(compiled)
+          }
+        else
+          str
         end
       end
 
