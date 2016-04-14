@@ -6,6 +6,9 @@ rvm:
   - 2.2.2
   - rbx-2
 script: bundle exec rake
+install:
+  - "gem install bundler"
+  - "bundle install --jobs=3 --retry=3"
 notifications:
   recipients:
     - shane@teamsnap.com
