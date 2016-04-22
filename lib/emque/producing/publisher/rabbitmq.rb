@@ -11,18 +11,17 @@ module Emque
 
         CONN = Bunny
           .new(Emque::Producing.configuration.rabbitmq_options[:url])
-          .tap { |conn|
-            conn.start
-          }
+          .tap { |conn| conn.start }
 
-        CHANNEL_POOL = Queue
-          .new
-          .tap { |queue|
-            20.times { |i| queue << CONN.create_channel }
-          }
+        CHANNEL_POOL = Queue.new.tap { |queue| queue << CONN.create_channel }
 
         def publish(topic, message_type, message, key = nil)
-          ch = CHANNEL_POOL.pop
+          begin
+            ch = CHANNEL_POOL.pop(true)
+          rescue ThreadError
+            ch = CONN.create_channel
+          end
+
           ch.open if ch.closed?
           begin
             exchange = ch.fanout(topic, :durable => true, :auto_delete => false)
