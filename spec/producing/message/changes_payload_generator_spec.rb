@@ -3,11 +3,13 @@ require "virtus"
 require "emque/producing/message/message_with_changeset"
 
 class FakeModel
-  include Virtus.model
+  include Virtus.value_object
 
-  attribute :foo, Integer
-  attribute :bar, Integer
-  attribute :baz, Integer
+  values do
+    attribute :foo, Integer
+    attribute :bar, Integer
+    attribute :baz, Integer
+  end
 end
 
 describe Emque::Producing::ChangesPayloadGenerator do
@@ -30,8 +32,7 @@ describe Emque::Producing::ChangesPayloadGenerator do
   context "updating object" do
     it "returns a correctly formatted payload" do
       original = FakeModel.new(:foo => 1, :bar => 2, :baz => 3)
-      updated = original.dup
-      updated.attributes = {:foo => 4}
+      updated = FakeModel.new(:foo => 4, :bar => 2, :baz => 3)
       generator = Emque::Producing::ChangesPayloadGenerator.new(
         :original => original.attributes, :updated => updated.attributes
       )
