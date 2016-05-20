@@ -28,6 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake",    "~> 10.4.2"
   spec.add_development_dependency "rspec",   "~> 3.2.0"
   spec.add_development_dependency "pry"
-  spec.add_development_dependency "bunny", "~> 1.7.0"
+  spec.add_development_dependency "bunny"
   spec.add_development_dependency "simplecov"
 end

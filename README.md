@@ -15,7 +15,7 @@ Add these lines to your application's Gemfile, depending on your message broker:
 
     # for RabbitMQ, bunny is used
     gem "emque-producing"
-    gem "bunny", "~> 1.7"
+    gem "bunny", "~> 2.3"
 
 And then execute:
 
@@ -28,7 +28,7 @@ Or install it yourself as:
 ## Usage
 
     # configure (likely in a Rails initializer)
-    require 'emque-producing'
+    require "emque-producing"
     Emque::Producing.configure do |c|
       c.app_name = "app"
       c.publishing_adapter = :rabbitmq
