@@ -13,11 +13,18 @@ module Emque
           .new(Emque::Producing.configuration.rabbitmq_options[:url])
           .tap { |conn| conn.start }
 
+        CONFIRM_CHANNEL_POOL = Queue.new.tap {
+          |queue| queue << CONN.create_channel
+        }
         CHANNEL_POOL = Queue.new.tap { |queue| queue << CONN.create_channel }
 
-        def publish(topic, message_type, message, key = nil)
+        def publish(topic, message_type, message, key = nil, raise_on_failure)
           begin
-            ch = CHANNEL_POOL.pop(true)
+            if raise_on_failure
+              ch = CONFIRM_CHANNEL_POOL.pop(true)
+            else
+              ch = CHANNEL_POOL.pop(true)
+            end
           rescue ThreadError
             ch = CONN.create_channel
           end
@@ -54,7 +61,11 @@ module Emque
 
             return sent
           ensure
-            CHANNEL_POOL << ch unless ch.nil?
+            if raise_on_failure
+              CONFIRM_CHANNEL_POOL << ch unless ch.nil?
+            else
+              CHANNEL_POOL << ch unless ch.nil?
+            end
           end
         end
       end
