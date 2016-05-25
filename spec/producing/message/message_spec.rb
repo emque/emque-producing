@@ -292,6 +292,10 @@ describe Emque::Producing::Message do
       let(:message) { TestMessageDontRaiseOnFailure.new() }
       let(:publisher) { TestPublisher.new }
 
+      it "sets raise_on_failure to false" do
+        expect(message.raise_on_failure?).to be(false)
+      end
+
       it "catches exceptions from publisher" do
         allow(Emque::Producing).to receive(:publisher) { raise TestPublisher::InvalidMessageError }
 
@@ -321,12 +325,15 @@ describe Emque::Producing::Message do
 
         expect{message.publish(publisher)}.to raise_error(TestMessageDontRaiseOnFailure::DontIgnoreThisError)
       end
-
     end
 
     describe "when true" do
       let(:message) { TestMessage.new(:test_id => 1) }
       let(:publisher) { TestPublisher.new }
+
+      it "sets raise_on_failure to true" do
+        expect(message.raise_on_failure?).to be(true)
+      end
 
       it "doesn't catch exceptions from publisher" do
         allow(Emque::Producing).to receive(:publisher) { raise TestPublisher::InvalidMessageError }
