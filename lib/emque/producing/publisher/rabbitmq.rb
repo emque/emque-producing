@@ -42,11 +42,7 @@ module Emque
               :content_type => "application/json"
             )
 
-            if raise_on_failure
-              success = ch.wait_for_confirms
-            else
-              success = true
-            end
+            success = ch.wait_for_confirms if raise_on_failure
 
             unless success
               Emque::Producing.logger.warn("RabbitMQ Publisher: message was nacked")
