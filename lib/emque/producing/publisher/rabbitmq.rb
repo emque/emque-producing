@@ -19,15 +19,7 @@ module Emque
         CHANNEL_POOL = Queue.new.tap { |queue| queue << CONN.create_channel }
 
         def publish(topic, message_type, message, key = nil, raise_on_failure)
-          begin
-            if raise_on_failure
-              ch = CONFIRM_CHANNEL_POOL.pop(true)
-            else
-              ch = CHANNEL_POOL.pop(true)
-            end
-          rescue ThreadError
-            ch = CONN.create_channel
-          end
+          ch = get_channel(raise_on_failure)
 
           ch.open if ch.closed?
           begin
@@ -70,6 +62,18 @@ module Emque
             else
               CHANNEL_POOL << ch unless ch.nil?
             end
+          end
+        end
+
+        def get_channel(raise_on_failure)
+          begin
+            if raise_on_failure
+              ch = CONFIRM_CHANNEL_POOL.pop(true)
+            else
+              ch = CHANNEL_POOL.pop(true)
+            end
+          rescue ThreadError
+            ch = CONN.create_channel
           end
         end
       end
