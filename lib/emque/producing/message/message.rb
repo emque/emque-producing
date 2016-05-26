@@ -74,7 +74,7 @@ module Emque
 
       def self.included(base)
         base.extend(ClassMethods)
-        base.send(:include, Virtus.model)
+        base.send(:include, Virtus.value_object)
         base.send(:attribute, :partition_key, String, :default => nil, :required => false)
       end
 

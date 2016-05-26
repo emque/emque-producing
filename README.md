@@ -44,8 +44,10 @@ Or install it yourself as:
       topic "topic1"
       message_type "mymessage.new"
 
-      attribute :first_property, Integer, :required => true
-      attribute :another_property, String, :required => true
+      values do
+        attribute :first_property, Integer, :required => true
+        attribute :another_property, String, :required => true
+      end
     end
 
     # produce message
