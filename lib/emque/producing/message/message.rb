@@ -133,7 +133,7 @@ module Emque
           log "valid...", true
           if Emque::Producing.configuration.publish_messages
             message = process_middleware(to_json)
-            sent = publisher.publish(topic, message_type, message, partition_key)
+            sent = publisher.publish(topic, message_type, message, partition_key, raise_on_failure?)
             log "sent #{sent}"
             raise MessagesNotSentError.new unless sent
           end

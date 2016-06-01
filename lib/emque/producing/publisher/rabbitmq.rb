@@ -13,22 +13,19 @@ module Emque
           .new(Emque::Producing.configuration.rabbitmq_options[:url])
           .tap { |conn| conn.start }
 
+        CONFIRM_CHANNEL_POOL = Queue.new.tap {
+          |queue| queue << CONN.create_channel
+        }
         CHANNEL_POOL = Queue.new.tap { |queue| queue << CONN.create_channel }
 
-        def publish(topic, message_type, message, key = nil)
-          begin
-            ch = CHANNEL_POOL.pop(true)
-          rescue ThreadError
-            ch = CONN.create_channel
-          end
+        def publish(topic, message_type, message, key = nil, raise_on_failure)
+          ch = get_channel(raise_on_failure)
 
           ch.open if ch.closed?
           begin
             exchange = ch.fanout(topic, :durable => true, :auto_delete => false)
 
-            # Assumes all messages are mandatory in order to let callers know if
-            # the message was not sent. Uses publisher confirms to wait.
-            ch.confirm_select
+            ch.confirm_select if raise_on_failure
             sent = true
 
             exchange.on_return do |return_info, properties, content|
@@ -42,19 +39,38 @@ module Emque
               :persistent => true,
               :type => message_type,
               :app_id => Emque::Producing.configuration.app_name,
-              :content_type => "application/json")
+              :content_type => "application/json"
+            )
 
-            success = ch.wait_for_confirms
-            unless success
-              Emque::Producing.logger.warn("RabbitMQ Publisher: message was nacked")
-              ch.nacked_set.each do |n|
-                Emque::Producing.logger.warn("message id: #{n}")
+            if raise_on_failure
+              success = ch.wait_for_confirms
+              unless success
+                Emque::Producing.logger.warn("RabbitMQ Publisher: message was nacked")
+                ch.nacked_set.each do |n|
+                  Emque::Producing.logger.warn("message id: #{n}")
+                end
               end
             end
 
             return sent
           ensure
-            CHANNEL_POOL << ch unless ch.nil?
+            if raise_on_failure
+              CONFIRM_CHANNEL_POOL << ch unless ch.nil?
+            else
+              CHANNEL_POOL << ch unless ch.nil?
+            end
+          end
+        end
+
+        def get_channel(raise_on_failure)
+          begin
+            if raise_on_failure
+              ch = CONFIRM_CHANNEL_POOL.pop(true)
+            else
+              ch = CHANNEL_POOL.pop(true)
+            end
+          rescue ThreadError
+            ch = CONN.create_channel
           end
         end
       end
