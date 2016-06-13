@@ -5,8 +5,7 @@
 Define and send messages with Ruby to a variety of [message brokers](http://en.wikipedia.org/wiki/Message_broker).
 The only currently supported message broker is [RabbitMQ](https://www.rabbitmq.com)
 
-This is a library that pairs nicely with [Emque
-Consuming](https://www.github.com/teamsnap/emque-consuming), a framework for
+This is a library that pairs nicely with [Emque Consuming](https://www.github.com/emque/emque-consuming), a framework for
 consuming and routing messages to your code.
 
 ## Installation
@@ -85,8 +84,7 @@ Or install it yourself as:
     )
 
 For a more thorough guide to creating new messages and/or message producing
-applications, [please read the wiki
-entry](https://github.com/teamsnap/emque-producing/wiki/Creating-New-Producing-Applications)
+applications, [please read the wiki entry](https://github.com/emque/emque-producing/wiki/Creating-New-Producing-Applications)
 
 ## Requirements
 
@@ -99,7 +97,7 @@ entry](https://github.com/teamsnap/emque-producing/wiki/Creating-New-Producing-A
 To run tests...
 
 ```
-rspec
+bundle exec rspec
 ```
 
 If you would like to test the gem as part of your client, you can update the
@@ -115,7 +113,9 @@ adapter which may be convenient in the case of CI environments.
 
 ## Contributing
 
-1. Fork it ( http://github.com/teamsnap/emquemessages/fork )
+FIRST: Read our style guides at https://github.com/teamsnap/guides/tree/master/ruby
+
+1. Fork it ( http://github.com/emque/emque-producing/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
