@@ -287,6 +287,20 @@ describe Emque::Producing::Message do
     end
   end
 
+  context "valid?" do
+    describe "it returns true" do
+      it "returns true when the message is valid" do
+        message = TestMessage.new(:test_id => 1)
+        expect(message.valid?).to be(true)
+      end
+
+      it "returns fales when the message is invalid" do
+        message = TestMessage.new()
+        expect(message.valid?).to be(false)
+      end
+    end
+  end
+
   context "raise_on_failure" do
     describe "when false" do
       let(:message) { TestMessageDontRaiseOnFailure.new() }
