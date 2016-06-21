@@ -110,7 +110,11 @@ module Emque
       end
 
       def valid?
-        invalid_attributes.empty? && topic && message_type
+        if invalid_attributes.empty? && topic && message_type
+          true
+        else
+          false
+        end
       end
 
       def invalid_attributes
