@@ -82,7 +82,7 @@ module Emque
         {
           :metadata =>
           {
-            :host => host_name,
+            :host => hostname,
             :app => app_name,
             :topic => topic,
             :created_at => formatted_time,
@@ -165,8 +165,8 @@ module Emque
         end
       end
 
-      def host_name
-        Socket.gethostbyname(Socket.gethostname).first
+      def hostname
+        Emque::Producing.hostname
       end
 
       def formatted_time

@@ -26,8 +26,10 @@ module Emque
         @configuration ||= Emque::Producing::Configuration.new
       end
 
-      def host_name
-        Socket.gethostbyname(Socket.gethostname).first
+      def hostname
+        return @hostname unless @hostname.nil?
+        @hostname = Socket.gethostbyname(Socket.gethostname).first
+        @hostname
       end
 
       def publisher

@@ -1,5 +1,6 @@
 # Emque Producing CHANGELOG
 
+- [Optimize hostname lookups](https://github.com/emque/emque-producing/pull/47) (1.1.6)
 - [Maintain support for Ruby 1.9.3](https://github.com/emque/emque-producing/pull/49) (1.1.5)
 - [Return true or false when evalutating a valid message](https://github.com/emque/emque-producing/pull/45) (1.1.4)
 - [Ensure we only confirm_select messages where raise_on_failure=true](https://github.com/emque/emque-producing/pull/41) (1.1.3)
