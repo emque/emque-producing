@@ -153,6 +153,29 @@ module Emque
         end
       end
 
+      def publish_in(delay)
+        publisher = Emque::Producing.publisher
+        log "publishing...", true
+        if valid?
+          log "valid...", true
+          if Emque::Producing.configuration.publish_messages
+            message = process_middleware(to_json)
+            sent = publisher.publish_in(delay, topic, message_type, message, partition_key, raise_on_failure?)
+            log "sent #{sent}"
+            raise MessagesNotSentError.new unless sent
+          end
+        else
+          log "failed...", true
+          raise InvalidMessageError.new(invalid_message)
+        end
+      rescue *ignored_exceptions => error
+        if raise_on_failure?
+          raise
+        else
+          log "failed ignoring exception... #{error}", true
+        end
+      end
+
       private
 
       def invalid_message

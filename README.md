@@ -53,6 +53,10 @@ Or install it yourself as:
     message = MyMessage.new({:first_property => 1, :another_property => "another"})
     message.publish
 
+    # produce message in 5 minutes
+    message = MyMessage.new({:first_property => 1, :another_property => "another"})
+    message.publish_in(5.minutes)
+
     # create a message class including changesets
     class MyChangesetMessage
       include Emque::Producing.message(:with_changeset => true)
