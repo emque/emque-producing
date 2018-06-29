@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.description   = %q{Define and send messages to a variety of message brokers}
   spec.homepage      = ""
   spec.license       = "MIT"
-  spec.required_ruby_version = ">= 2.1"
+  spec.required_ruby_version = ">= 2.3"
 
   # Manifest
   spec.files         = `git ls-files`.split("\n")
@@ -28,6 +28,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake",    "~> 10.4.2"
   spec.add_development_dependency "rspec",   "~> 3.2.0"
   spec.add_development_dependency "pry"
-  spec.add_development_dependency "bunny", "~> 2.5"
   spec.add_development_dependency "simplecov", "~> 0.11.2"
 end
