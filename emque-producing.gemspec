@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.description   = %q{Define and send messages to a variety of message brokers}
   spec.homepage      = ""
   spec.license       = "MIT"
-  spec.required_ruby_version = ">= 2.1"
+  spec.required_ruby_version = ">= 2.3"
 
   # Manifest
   spec.files         = `git ls-files`.split("\n")
