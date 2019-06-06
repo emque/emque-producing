@@ -28,7 +28,7 @@ module Emque
 
       def hostname
         return @hostname unless @hostname.nil?
-        @hostname = Socket.gethostbyname(Socket.gethostname).first
+        @hostname = Socket.gethostname
         @hostname
       end
 

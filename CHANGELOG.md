@@ -1,5 +1,6 @@
 # Emque Producing CHANGELOG
 
+- [Refine hostname lookups](https://github.com/emque/emque-producing/pull/56) (1.3.1)
 - Bump Ruby requirement to 2.3 (1.3.0)
 - [Bump Ruby requirement to 2.1](https://github.com/emque/emque-producing/pull/51) (1.2.0)
 - [Optimize hostname lookups](https://github.com/emque/emque-producing/pull/47) (1.1.6)
