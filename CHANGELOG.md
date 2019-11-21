@@ -1,5 +1,6 @@
 # Emque Producing CHANGELOG
 
+- [Add ability to publish to Google Cloud Pub/Sub](https://github.com/emque/emque-producing/pull/57) (2.0.0.beta1)
 - [Update Rake to fix CVE-2020-8130](https://github.com/emque/emque-producing/pull/59) (1.3.2)
 - [Refine hostname lookups](https://github.com/emque/emque-producing/pull/56) (1.3.1)
 - Bump Ruby requirement to 2.3 (1.3.0)

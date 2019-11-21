@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["emily@teamsnap.com", "ryan.williams@teamsnap.com"]
   spec.summary       = %q{Define and send messages to a variety of message brokers}
   spec.description   = %q{Define and send messages to a variety of message brokers}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/emque/emque-producing"
   spec.license       = "MIT"
   spec.required_ruby_version = ">= 2.3"
 
@@ -29,5 +29,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.9.0"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "bunny", "~> 2.14"
+  spec.add_development_dependency "google-cloud-pubsub", ">= 1.0"
   spec.add_development_dependency "simplecov", "~> 0.11.2"
 end

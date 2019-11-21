@@ -1,7 +1,6 @@
 module Emque
   module Producing
     class << self
-      attr_accessor :publisher
       attr_writer :configuration
 
       def message(opts = {})
@@ -18,6 +17,10 @@ module Emque
         end
       end
 
+      def publishers
+        @publishers ||= get_publishers
+      end
+
       def configure
         yield(configuration)
       end
@@ -27,21 +30,40 @@ module Emque
       end
 
       def hostname
-        return @hostname unless @hostname.nil?
-        @hostname = Socket.gethostname
-        @hostname
+        @hostname ||= Socket.gethostname
       end
 
-      def publisher
-        return @publisher unless @publisher.nil?
+      def get_publishers
+        publishers = []
 
-        if (configuration.publishing_adapter == :rabbitmq)
-          require "emque/producing/publisher/rabbitmq"
-          @publisher = Emque::Producing::Publisher::RabbitMq.new
-        else
-          raise "No publisher configured"
+        case configuration.publishing_adapter
+          when Symbol
+            if configuration.publishing_adapter == :rabbitmq
+              require "emque/producing/publisher/rabbitmq"
+              publishers << Emque::Producing::Publisher::RabbitMq.new
+            elsif configuration.publishing_adapter == :google_cloud_pubsub
+              require "emque/producing/publisher/google_cloud_pubsub"
+              publishers << Emque::Producing::Publisher::GoogleCloudPubsub.new
+            else
+              raise "No publisher configured"
+            end
+          when Array
+            if configuration.publishing_adapter.empty?
+              raise "No publisher configured"
+            end
+            if configuration.publishing_adapter.include?(:rabbitmq)
+              require "emque/producing/publisher/rabbitmq"
+              publishers << Emque::Producing::Publisher::RabbitMq.new
+            end
+            if configuration.publishing_adapter.include?(:google_cloud_pubsub)
+              require "emque/producing/publisher/google_cloud_pubsub"
+              publishers << Emque::Producing::Publisher::GoogleCloudPubsub.new
+            end
+          else
+            raise "No publisher configured"
         end
-        @publisher
+
+        publishers
       end
 
       def logger

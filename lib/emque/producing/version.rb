@@ -1,5 +1,5 @@
 module Emque
   module Producing
-    VERSION = "1.3.2"
+    VERSION = "2.0.0.beta1"
   end
 end
