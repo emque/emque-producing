@@ -4,7 +4,7 @@ module Emque
   module Producing
     module Publisher
       class GoogleCloudPubsub < Emque::Producing::Publisher::Base
-        def publish(topic_name, message_type, message, key = nil, raise_on_failure)
+        def publish(topic_name, message_type, message, raise_on_failure)
           Emque::Producing.logger.info("GoogleCloudPubsub#publish")
 
           pubsub = Google::Cloud::PubSub.new(
