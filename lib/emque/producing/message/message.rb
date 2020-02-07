@@ -129,14 +129,16 @@ module Emque
       end
 
       def publish(publisher=nil)
-        publisher ||= Emque::Producing.publisher
+        publishers ||= Emque::Producing.publishers
         log "publishing...", true
         if valid?
           log "valid...", true
           if Emque::Producing.configuration.publish_messages
             message = process_middleware(to_json)
-            sent = publisher.publish(topic, message_type, message, raise_on_failure?)
-            log "sent #{sent}"
+            publishers.each do |publisher|
+              sent = publisher.publish(topic, message_type, message, raise_on_failure?)
+              log "sent #{sent}"
+            end
             raise MessagesNotSentError.new unless sent
           end
         else

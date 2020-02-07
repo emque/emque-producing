@@ -4,13 +4,15 @@ module Emque
   module Producing
     module Publisher
       class GoogleCloudPubsub < Emque::Producing::Publisher::Base
-        def publish(topic_name, message_type, message, raise_on_failure)
-          Emque::Producing.logger.info("GoogleCloudPubsub#publish")
-
-          pubsub = Google::Cloud::PubSub.new(
+        def initialize
+          self.pubsub = Google::Cloud::PubSub.new(
             :project_id => Emque::Producing.configuration.google_cloud_pubsub_options[:project_id],
             :credentials => Emque::Producing.configuration.google_cloud_pubsub_options[:credentials]
           )
+        end
+
+        def publish(topic_name, message_type, message, raise_on_failure)
+          # Emque::Producing.logger.info("GoogleCloudPubsub#publish")
 
           topic = pubsub.topic(topic_name)
           if topic.nil?
@@ -38,6 +40,8 @@ module Emque
 
           sent
         end
+
+        attr_accessor :pubsub
       end
     end
   end
