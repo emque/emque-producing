@@ -135,10 +135,11 @@ module Emque
           if Emque::Producing.configuration.publish_messages
             message = process_middleware(to_json)
             publishers.each do |publisher|
-              sent = Emque::Producing.publishers
+              sent = Emque::Producing
+                .publishers
                 .fetch(publisher)
                 .publish(topic, message_type, message, raise_on_failure?)
-              log "sent #{sent}"
+              log "publisher: #{publisher} sent: #{sent}"
               raise MessagesNotSentError.new unless sent
             end
           end
@@ -182,10 +183,14 @@ module Emque
         Emque::Producing.configuration.app_name || raise("Messages must have an app name configured.")
       end
 
+      def logger
+        Emque::Producing.logger
+      end
+
       def log(message, include_message = false)
         if Emque::Producing.configuration.log_publish_message
           message = "#{message} #{to_json}" if include_message
-          Emque::Producing.logger.info("MESSAGE LOG: #{message}")
+          logger.info("MESSAGE LOG: #{message}")
         end
       end
 
