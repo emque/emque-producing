@@ -128,18 +128,19 @@ module Emque
         Oj.dump(data, :mode => :compat)
       end
 
-      def publish(publisher=nil)
-        publishers ||= Emque::Producing.publishers
+      def publish(publishers=[:rabbitmq])
         log "publishing...", true
         if valid?
           log "valid...", true
           if Emque::Producing.configuration.publish_messages
             message = process_middleware(to_json)
             publishers.each do |publisher|
-              sent = publisher.publish(topic, message_type, message, raise_on_failure?)
+              sent = Emque::Producing.publishers
+                .fetch(publisher)
+                .publish(topic, message_type, message, raise_on_failure?)
               log "sent #{sent}"
+              raise MessagesNotSentError.new unless sent
             end
-            raise MessagesNotSentError.new unless sent
           end
         else
           log "failed...", true

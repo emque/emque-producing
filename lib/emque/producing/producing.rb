@@ -34,16 +34,16 @@ module Emque
       end
 
       def get_publishers
-        publishers = []
+        publishers = {}
 
         case configuration.publishing_adapter
           when Symbol
             if configuration.publishing_adapter == :rabbitmq
               require "emque/producing/publisher/rabbitmq"
-              publishers << Emque::Producing::Publisher::RabbitMq.new
+              publishers[:rabbitmq] = Emque::Producing::Publisher::RabbitMq.new
             elsif configuration.publishing_adapter == :google_cloud_pubsub
               require "emque/producing/publisher/google_cloud_pubsub"
-              publishers << Emque::Producing::Publisher::GoogleCloudPubsub.new
+              publishers[:google_cloud_pubsub] = Emque::Producing::Publisher::GoogleCloudPubsub.new
             else
               raise "No publisher configured"
             end
@@ -53,11 +53,11 @@ module Emque
             end
             if configuration.publishing_adapter.include?(:rabbitmq)
               require "emque/producing/publisher/rabbitmq"
-              publishers << Emque::Producing::Publisher::RabbitMq.new
+              publishers[:rabbitmq] = Emque::Producing::Publisher::RabbitMq.new
             end
             if configuration.publishing_adapter.include?(:google_cloud_pubsub)
               require "emque/producing/publisher/google_cloud_pubsub"
-              publishers << Emque::Producing::Publisher::GoogleCloudPubsub.new
+              publishers[:google_cloud_pubsub] = Emque::Producing::Publisher::GoogleCloudPubsub.new
             end
           else
             raise "No publisher configured"
