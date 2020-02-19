@@ -93,7 +93,7 @@ describe Emque::Producing::Message do
         :updated => {"type" => "Event", "date" => "2000-01-01"}
       )
       json = produced_message.to_json
-      consumed_message = Oj.load(json)
+      consumed_message = JSON.parse(json)
       expect(consumed_message["change_set"]).to eql(
         {
           "original"=>{"event_type"=>"Game", "event_date"=>"2000-01-02"},
@@ -117,7 +117,7 @@ describe Emque::Producing::Message do
         :original => {"type" => "Game"}
       )
       json = produced_message.to_json
-      consumed_message = Oj.load(json)
+      consumed_message = JSON.parse(json)
       expect(consumed_message["change_set"]).to eql(
         {
           "original"=>{"event_type"=>"Game"},
@@ -140,14 +140,14 @@ describe Emque::Producing::Message do
     end
 
     it "can be transformed to json" do
-      message = Oj.load(TestMessage.new().to_json)
+      message = JSON.parse(TestMessage.new().to_json)
       expect(message["metadata"]["app"]).to eql("my_app")
     end
 
     it "includes valid attributes in json" do
       produced_message = TestMessage.new(:test_id => 1)
       json = produced_message.to_json
-      consumed_message = Oj.load(json)
+      consumed_message = JSON.parse(json)
       expect(consumed_message["test_id"]).to eql(1)
     end
   end
@@ -202,7 +202,7 @@ describe Emque::Producing::Message do
           :original => {:uuid => 3, :attr => "old_value"}
         )
         json = produced_message.to_json
-        consumed_message = Oj.load(json)
+        consumed_message = JSON.parse(json)
         expect(consumed_message["test_uuid"]).to eql(3)
       end
 
@@ -212,7 +212,7 @@ describe Emque::Producing::Message do
           :updated => {:uuid => 2, :attr => "new_value"}
         )
         json = produced_message.to_json
-        consumed_message = Oj.load(json)
+        consumed_message = JSON.parse(json)
         expect(consumed_message["test_uuid"]).to eql(2)
       end
     end
@@ -229,7 +229,7 @@ describe Emque::Producing::Message do
           :original => {:id => 3, :attr => "old_value"}
         )
         json = produced_message.to_json
-        consumed_message = Oj.load(json)
+        consumed_message = JSON.parse(json)
         expect(consumed_message["test_id"]).to eql(3)
       end
 
@@ -239,7 +239,7 @@ describe Emque::Producing::Message do
           :updated => {:id => 2, :attr => "new_value"}
         )
         json = produced_message.to_json
-        consumed_message = Oj.load(json)
+        consumed_message = JSON.parse(json)
         expect(consumed_message["test_id"]).to eql(2)
       end
     end
@@ -247,7 +247,7 @@ describe Emque::Producing::Message do
     it "defaults to a changeset of 'created' when no updated or original is passed in" do
       produced_message = TestMessageWithChangeset.new(:test_id => 1)
       json = produced_message.to_json
-      consumed_message = Oj.load(json)
+      consumed_message = JSON.parse(json)
       expect(consumed_message["change_set"]).to eql(
         {"original"=>{}, "updated"=>{}, "delta"=>"_created"}
       )
@@ -259,7 +259,7 @@ describe Emque::Producing::Message do
         :original => {:attr => "old_value"}
       )
       json = produced_message.to_json
-      consumed_message = Oj.load(json)
+      consumed_message = JSON.parse(json)
       expect(consumed_message["change_set"]).to eql(
         {"original"=>{"attr"=>"old_value"}, "updated"=>{}, "delta"=>"_deleted"}
       )
@@ -272,7 +272,7 @@ describe Emque::Producing::Message do
         :original => {:attr => "old_value"}
       )
       json = produced_message.to_json
-      consumed_message = Oj.load(json)
+      consumed_message = JSON.parse(json)
       expect(consumed_message["change_set"]).to eql(
         {
           "original"=>{"attr"=>"old_value"},

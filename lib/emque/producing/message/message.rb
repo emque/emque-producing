@@ -127,7 +127,7 @@ module Emque
 
       def to_json
         data = self.add_metadata
-        Oj.dump(data, :mode => :compat)
+        JSON.generate(data)
       end
 
       def publish(publisher=nil)

@@ -88,7 +88,7 @@ applications, [please read the wiki entry](https://github.com/emque/emque-produc
 
 ## Requirements
 
-* Ruby 1.9.3 or higher
+* Ruby 2.3 or higher
 * RabbitMQ 3.x
 * Bunny 1.4.x
 
