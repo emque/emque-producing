@@ -1,5 +1,5 @@
+require "json"
 require "virtus"
-require "oj"
 require "emque/producing/version"
 require "emque/producing/producing"
 require "emque/producing/configuration"
