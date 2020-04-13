@@ -30,8 +30,8 @@ Or install it yourself as:
     require 'emque-producing'
     Emque::Producing.configure do |c|
       c.app_name = "app"
-      c.publishing_adapter = [:rabbitmq]
-      c.rabbitmq_options[:url] = "amqp://guest:guest@localhost:5672"
+      c.publiser :rabbitmq, url: "amqp://guest:guest@localhost:5672"
+      c.publiser :google_cloud_pubsub, project_id: "project", credentials: "credentials"
       c.error_handlers << Proc.new {|ex,context|
        # notify/log
       }

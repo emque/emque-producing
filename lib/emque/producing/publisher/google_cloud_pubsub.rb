@@ -4,10 +4,10 @@ module Emque
   module Producing
     module Publisher
       class GoogleCloudPubsub < Emque::Producing::Publisher::Base
-        def initialize
+        def initialize(project_id:, credentials:)
           self.pubsub = Google::Cloud::PubSub.new(
-            :project_id => Emque::Producing.configuration.google_cloud_pubsub_options[:project_id],
-            :credentials => Emque::Producing.configuration.google_cloud_pubsub_options[:credentials]
+            :project_id => project_id,
+            :credentials => credentials
           )
         end
 
