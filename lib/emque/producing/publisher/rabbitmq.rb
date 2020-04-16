@@ -6,7 +6,6 @@ module Emque
     module Publisher
       class RabbitMq < Emque::Producing::Publisher::Base
         attr_accessor :connection
-        attr_accessor :connection
         attr_accessor :channel_pool
         attr_accessor :confirms_channel_pool
 
