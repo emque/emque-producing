@@ -14,7 +14,7 @@ module Emque
 
       def initialize
         @app_name = ""
-        @publishers = []
+        @publishers = {}
         @error_handlers = []
         @log_publish_message = false
         @publish_messages = true
@@ -33,7 +33,7 @@ module Emque
           raise "publisher not available"
         end
 
-        Emque::Producing.publishers[:adapter] = publishing_adapter
+        self.publishers[:adapter] = publishing_adapter
       end
 
       def use(callable)
