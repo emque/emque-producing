@@ -14,10 +14,10 @@ module Emque
         def publish(topic_name, message_type, message, raise_on_failure)
           Emque::Producing.logger.debug("GoogleCloudPubsub#publish")
 
-          topic = pubsub.topic(topic_name)
+          topic = pubsub.topic(message_type)
           if topic.nil?
             Emque::Producing.logger.info("GoogleCloudPubsub Publisher: Creating topic #{topic_name}")
-            topic = pubsub.create_topic(topic_name)
+            topic = pubsub.create_topic(message_type)
           end
 
           Emque::Producing.logger.info("GoogleCloudPubsub Publisher: Publishing Message")
