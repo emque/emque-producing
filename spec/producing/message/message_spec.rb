@@ -314,7 +314,7 @@ describe Emque::Producing::Message do
         allow(Emque::Producing).to receive(:publishers) { {:test => publisher} }
         allow(publisher).to receive(:publish).and_raise(TestPublisher::InvalidMessageError)
 
-        expect{message.publish([:test])}.not_to raise_error
+        expect{message.publish(publishers: [:test])}.not_to raise_error
       end
 
       it "rescues exceptions when publish doesn't send" do
@@ -323,7 +323,7 @@ describe Emque::Producing::Message do
         allow(Emque::Producing).to receive(:publishers) { {:test => publisher} }
         allow(publisher).to receive(:publish) { false }
 
-        expect{message.publish([:test])}.not_to raise_error
+        expect{message.publish(publishers: [:test])}.not_to raise_error
       end
 
       it "rescues exceptions that are in the ignored list of excpetions" do
@@ -332,7 +332,7 @@ describe Emque::Producing::Message do
         allow(Emque::Producing).to receive(:publishers) { {:test => publisher} }
         allow(publisher).to receive(:publish).and_raise(TestMessageDontRaiseOnFailure::IgnoreThisError)
 
-        expect{message.publish([:test])}.not_to raise_error
+        expect{message.publish(publishers: [:test])}.not_to raise_error
       end
 
       it "doesnt catch an exceptions that isn't in the " do
@@ -341,7 +341,7 @@ describe Emque::Producing::Message do
         allow(Emque::Producing).to receive(:publishers) { {:test => publisher} }
         allow(publisher).to receive(:publish).and_raise(TestMessageDontRaiseOnFailure::DontIgnoreThisError)
 
-        expect{message.publish([:test])}.to raise_error(TestMessageDontRaiseOnFailure::DontIgnoreThisError)
+        expect{message.publish(publishers: [:test])}.to raise_error(TestMessageDontRaiseOnFailure::DontIgnoreThisError)
       end
     end
 
@@ -357,7 +357,7 @@ describe Emque::Producing::Message do
         allow(Emque::Producing).to receive(:publishers) { {:test => publisher} }
         allow(publisher).to receive(:publish).and_raise(TestPublisher::InvalidMessageError)
 
-        expect{message.publish([:test])}.to raise_error(TestPublisher::InvalidMessageError)
+        expect{message.publish(publishers: [:test])}.to raise_error(TestPublisher::InvalidMessageError)
       end
 
       it "raises exceptions when publish doesn't send" do
@@ -366,7 +366,7 @@ describe Emque::Producing::Message do
         allow(Emque::Producing).to receive(:publishers) { {:test => publisher} }
         allow(publisher).to receive(:publish) { false }
 
-        expect{message.publish([:test])}.to raise_error(Emque::Producing::Message::MessagesNotSentError)
+        expect{message.publish(publishers: [:test])}.to raise_error(Emque::Producing::Message::MessagesNotSentError)
       end
     end
   end

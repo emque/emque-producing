@@ -128,9 +128,8 @@ module Emque
         Oj.dump(data, :mode => :compat)
       end
 
-      # def publish_all
-      #   publish
-      # end
+      def publish_all
+      end
 
       def publish(publishers:)
         log "publishing...", true
