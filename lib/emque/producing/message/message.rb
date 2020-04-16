@@ -129,6 +129,7 @@ module Emque
       end
 
       def publish_all
+        publish(publishers: Emque::Producing.publishers.keys)
       end
 
       def publish(publishers:)
