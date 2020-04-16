@@ -15,13 +15,7 @@ module Emque
         end
 
         def initialize(url:)
-          @connection ||= Bunny.new(url).tap {
-            |conn| conn.start
-          }
-        end
-
-        def initialize
-          self.connection = Bunny.new.tap { |conn|
+          self.connection = Bunny.new(url).tap { |conn|
             conn.start
           }
           self.channel_pool = Queue.new.tap { |queue|
