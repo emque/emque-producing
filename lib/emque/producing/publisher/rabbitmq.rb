@@ -15,7 +15,7 @@ module Emque
         end
 
         def initialize(url:)
-          @connection ||= Bunny.new(url]).tap {
+          @connection ||= Bunny.new(url).tap {
             |conn| conn.start
           }
         end
