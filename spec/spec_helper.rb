@@ -1,10 +1,5 @@
 $TESTING = true
 
-require "simplecov"
-SimpleCov.start do
-  add_filter "spec/"
-end
-
 require "pry"
 require "emque-producing"
 
