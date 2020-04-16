@@ -25,10 +25,15 @@ module Emque
       def publisher(adapter, *args)
         if adapter == :rabbitmq
           require "emque/producing/publisher/rabbitmq"
-          publishing_adapter = Emque::Producing::Publisher::RabbitMq.new(url: args.first)
+          publishing_adapter = Emque::Producing::Publisher::RabbitMq.new(
+            url: args.first.fetch(:url)
+          )
         elsif adapter == :google_cloud_pubsub
           require "emque/producing/publisher/google_cloud_pubsub"
-          publishing_adapter = Emque::Producing::Publisher::GoogleCloudPubsub.new(project_id: args.first, credentials: args.last)
+          publishing_adapter = Emque::Producing::Publisher::GoogleCloudPubsub.new(
+            project_id: args.first.fetch(:project_id),
+            credentials: args.first.fetch(:credentials)
+          )
         else
           raise "publisher not available"
         end
