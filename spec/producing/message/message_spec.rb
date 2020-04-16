@@ -164,19 +164,19 @@ describe Emque::Producing::Message do
   it "raises a useful message when trying to send an invalid message" do
     message = TestMessage.new()
     expected_error = Emque::Producing::Message::InvalidMessageError
-    expect{message.publish(->{})}.to raise_error(expected_error)
+    expect{message.publish(publishers: [])}.to raise_error(expected_error)
   end
 
   it "validates that the message has a topic" do
     message = MessageNoTopic.new
     expected_error = Emque::Producing::Message::InvalidMessageError
-    expect{message.publish(->{})}.to raise_error(expected_error, "A topic is required")
+    expect{message.publish(publishers: [])}.to raise_error(expected_error, "A topic is required")
   end
 
   it "validates that the message has a message type" do
     message = MessageNoType.new
     expected_error = Emque::Producing::Message::InvalidMessageError
-    expect{message.publish(->{})}.to raise_error(expected_error, "A message type is required")
+    expect{message.publish(publishers: [])}.to raise_error(expected_error, "A message type is required")
   end
 
   it "applys a uuid per message" do
