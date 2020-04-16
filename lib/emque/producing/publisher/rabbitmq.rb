@@ -5,8 +5,10 @@ module Emque
   module Producing
     module Publisher
       class RabbitMq < Emque::Producing::Publisher::Base
-
         attr_accessor :connection
+        attr_accessor :connection
+        attr_accessor :channel_pool
+        attr_accessor :confirms_channel_pool
 
         Emque::Producing.configure do |c|
           c.ignored_exceptions = c.ignored_exceptions + [Bunny::Exception, Timeout::Error]
@@ -18,14 +20,17 @@ module Emque
           }
         end
 
-        CONN = Bunny
-          .new(Emque::Producing.configuration.rabbitmq_options[:url])
-          .tap { |conn| conn.start }
-
-        CONFIRM_CHANNEL_POOL = Queue.new.tap {
-          |queue| queue << CONN.create_channel
-        }
-        CHANNEL_POOL = Queue.new.tap { |queue| queue << CONN.create_channel }
+        def initialize
+          self.connection = Bunny.new.tap { |conn|
+            conn.start
+          }
+          self.channel_pool = Queue.new.tap { |queue|
+            queue << connection.create_channel
+          }
+          self.confirms_channel_pool = Queue.new.tap { |queue|
+            queue << connection.create_channel
+          }
+        end
 
         def publish(topic, message_type, message, raise_on_failure)
           ch = get_channel(raise_on_failure)
@@ -64,9 +69,9 @@ module Emque
             return sent
           ensure
             if raise_on_failure
-              CONFIRM_CHANNEL_POOL << ch unless ch.nil?
+              confirms_channel_pool << ch unless ch.nil?
             else
-              CHANNEL_POOL << ch unless ch.nil?
+              channel_pool << ch unless ch.nil?
             end
           end
         end
@@ -74,12 +79,12 @@ module Emque
         def get_channel(raise_on_failure)
           begin
             if raise_on_failure
-              ch = CONFIRM_CHANNEL_POOL.pop(true)
+              ch = confirms_channel_pool.pop(true)
             else
-              ch = CHANNEL_POOL.pop(true)
+              ch = channel_pool.pop(true)
             end
           rescue ThreadError
-            ch = CONN.create_channel
+            ch = connection.create_channel
           end
         end
       end

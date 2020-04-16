@@ -21,9 +21,9 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "bundler", ">= 1.3.0"
   spec.add_dependency "oj",        "~> 2.10"
   spec.add_dependency "virtus",    "~> 1.0"
-  spec.add_dependency "bundler", ">= 1.3.0"
 
   spec.add_development_dependency "rake", ">= 12.3.3"
   spec.add_development_dependency "rspec", "~> 3.9.0"

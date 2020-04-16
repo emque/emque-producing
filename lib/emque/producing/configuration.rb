@@ -9,7 +9,6 @@ module Emque
       attr_accessor :log_publish_message
       attr_accessor :publish_messages
       attr_reader :rabbitmq_options
-      attr_reader :google_cloud_pubsub_options
       attr_accessor :ignored_exceptions
       attr_reader :middleware
 
@@ -19,12 +18,22 @@ module Emque
         @error_handlers = []
         @log_publish_message = false
         @publish_messages = true
-        @rabbitmq_options = {
-          :url => "amqp://guest:guest@localhost:5672"
-        }
-        @google_cloud_pubsub_options = {}
         @ignored_exceptions = [Emque::Producing::Message::MessagesNotSentError]
         @middleware = []
+      end
+
+      def publisher(adapter, *args)
+        if adapter == :rabbitmq
+          require "emque/producing/publisher/rabbitmq"
+          publishing_adapter = Emque::Producing::Publisher::RabbitMq.new(url: args.first)
+        elsif adapter == :google_cloud_pubsub
+          require "emque/producing/publisher/google_cloud_pubsub"
+          publishing_adapter = Emque::Producing::Publisher::GoogleCloudPubsub.new(project_id: args.first, credentials: args.last)
+        else
+          raise "publisher not available"
+        end
+
+        Emque::Producing.publishers[:adapter] = publishing_adapter
       end
 
       def use(callable)
