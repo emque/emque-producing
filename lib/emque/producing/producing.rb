@@ -3,8 +3,6 @@ module Emque
     class << self
       attr_writer :configuration
 
-      attr_accessor :publishers
-
       def message(opts = {})
         with_changeset = opts.fetch(:with_changeset) { false }
 
