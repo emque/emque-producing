@@ -3,6 +3,8 @@ module Emque
     class << self
       attr_writer :configuration
 
+      attr_accessor :publishers
+
       def message(opts = {})
         with_changeset = opts.fetch(:with_changeset) { false }
 
@@ -18,7 +20,7 @@ module Emque
       end
 
       def publishers
-        @publishers ||= get_publishers
+        @configuration.publishers
       end
 
       def configure
@@ -31,39 +33,6 @@ module Emque
 
       def hostname
         @hostname ||= Socket.gethostname
-      end
-
-      def get_publishers
-        publishers = {}
-
-        case configuration.publishing_adapter
-          when Symbol
-            if configuration.publishing_adapter == :rabbitmq
-              require "emque/producing/publisher/rabbitmq"
-              publishers[:rabbitmq] = Emque::Producing::Publisher::RabbitMq.new
-            elsif configuration.publishing_adapter == :google_cloud_pubsub
-              require "emque/producing/publisher/google_cloud_pubsub"
-              publishers[:google_cloud_pubsub] = Emque::Producing::Publisher::GoogleCloudPubsub.new
-            else
-              raise "No publisher configured"
-            end
-          when Array
-            if configuration.publishing_adapter.empty?
-              raise "No publisher configured"
-            end
-            if configuration.publishing_adapter.include?(:rabbitmq)
-              require "emque/producing/publisher/rabbitmq"
-              publishers[:rabbitmq] = Emque::Producing::Publisher::RabbitMq.new
-            end
-            if configuration.publishing_adapter.include?(:google_cloud_pubsub)
-              require "emque/producing/publisher/google_cloud_pubsub"
-              publishers[:google_cloud_pubsub] = Emque::Producing::Publisher::GoogleCloudPubsub.new
-            end
-          else
-            raise "No publisher configured"
-        end
-
-        publishers
       end
 
       def logger

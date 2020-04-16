@@ -5,8 +5,17 @@ module Emque
   module Producing
     module Publisher
       class RabbitMq < Emque::Producing::Publisher::Base
+
+        attr_accessor :connection
+
         Emque::Producing.configure do |c|
           c.ignored_exceptions = c.ignored_exceptions + [Bunny::Exception, Timeout::Error]
+        end
+
+        def initialize(url:)
+          @connection ||= Bunny.new(url]).tap {
+            |conn| conn.start
+          }
         end
 
         CONN = Bunny

@@ -4,7 +4,7 @@ module Emque
 
     class Configuration
       attr_accessor :app_name
-      attr_accessor :publishing_adapter
+      attr_accessor :publishers
       attr_accessor :error_handlers
       attr_accessor :log_publish_message
       attr_accessor :publish_messages
@@ -15,7 +15,7 @@ module Emque
 
       def initialize
         @app_name = ""
-        @publishing_adapter = [:rabbitmq]
+        @publishers = []
         @error_handlers = []
         @log_publish_message = false
         @publish_messages = true

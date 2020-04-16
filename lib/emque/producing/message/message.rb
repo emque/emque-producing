@@ -128,7 +128,11 @@ module Emque
         Oj.dump(data, :mode => :compat)
       end
 
-      def publish(publishers=[:rabbitmq])
+      # def publish_all
+      #   publish
+      # end
+
+      def publish(publishers:)
         log "publishing...", true
         if valid?
           log "valid...", true
