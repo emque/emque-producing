@@ -75,7 +75,6 @@ module Emque
       def self.included(base)
         base.extend(ClassMethods)
         base.send(:include, Virtus.value_object)
-        base.send(:attribute, :partition_key, String, :default => nil, :required => false)
       end
 
       def add_metadata
@@ -87,8 +86,7 @@ module Emque
             :topic => topic,
             :created_at => formatted_time,
             :uuid => uuid,
-            :type => message_type,
-            :partition_key => partition_key
+            :type => message_type
           }
         }.merge(public_attributes)
       end
@@ -137,7 +135,7 @@ module Emque
           log "valid...", true
           if Emque::Producing.configuration.publish_messages
             message = process_middleware(to_json)
-            sent = publisher.publish(topic, message_type, message, partition_key, raise_on_failure?)
+            sent = publisher.publish(topic, message_type, message, raise_on_failure?)
             log "sent #{sent}"
             raise MessagesNotSentError.new unless sent
           end
