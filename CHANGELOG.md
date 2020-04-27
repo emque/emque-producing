@@ -1,5 +1,13 @@
 # Emque Producing CHANGELOG
 
+## 1.4.0
+
+- [Deprecated: publish on message will be removed in favor of having publishers publish](https://github.com/emque/emque-producing/pull/60)
+- [Removed: Partition Key from message](https://github.com/emque/emque-producing/pull/60)
+
+
+## Older
+
 - [Update Rake to fix CVE-2020-8130](https://github.com/emque/emque-producing/pull/59) (1.3.2)
 - [Refine hostname lookups](https://github.com/emque/emque-producing/pull/56) (1.3.1)
 - Bump Ruby requirement to 2.3 (1.3.0)

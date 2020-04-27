@@ -18,7 +18,7 @@ module Emque
         }
         CHANNEL_POOL = Queue.new.tap { |queue| queue << CONN.create_channel }
 
-        def publish(topic, message_type, message, key = nil, raise_on_failure)
+        def publish(topic, message_type, message, raise_on_failure)
           ch = get_channel(raise_on_failure)
 
           ch.open if ch.closed?

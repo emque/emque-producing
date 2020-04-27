@@ -11,7 +11,6 @@ module Emque
       def self.included(base)
         base.extend(ClassMethods)
         base.send(:include, Emque::Producing::Message)
-        base.send(:attribute, :partition_key, String, :default => nil, :required => false)
         base.send(:attribute, :change_set, Hash, :default => :build_change_set, :required => true)
         base.send(:private_attribute, :updated)
         base.send(:private_attribute, :original)
