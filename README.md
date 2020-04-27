@@ -49,9 +49,14 @@ Or install it yourself as:
       end
     end
 
-    # produce message
+    # Current, deprecated method to produce a message
     message = MyMessage.new({:first_property => 1, :another_property => "another"})
     message.publish
+
+    # future direction in v2
+    message = MyMessage.new({:first_property => 1, :another_property => "another"})
+    Emque::Producing::Publisher::RabbitMq.new.publish(message)
+    Emque::Producing::Publisher::GoogleCloudPubSub.new.publish(message)
 
     # create a message class including changesets
     class MyChangesetMessage
@@ -88,9 +93,9 @@ applications, [please read the wiki entry](https://github.com/emque/emque-produc
 
 ## Requirements
 
-* Ruby 1.9.3 or higher
+* Ruby 2.3 or higher
 * RabbitMQ 3.x
-* Bunny 1.4.x
+* Bunny 2.x
 
 ## Tests
 

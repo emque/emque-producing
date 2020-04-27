@@ -129,6 +129,8 @@ module Emque
       end
 
       def publish(publisher=nil)
+        warn "[DEPRECATION] `publish` is deprecated. Publishers should publish, message should not"
+
         publisher ||= Emque::Producing.publisher
         log "publishing...", true
         if valid?
